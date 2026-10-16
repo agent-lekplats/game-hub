@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="sv">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Agent-lekplats</title>
+  <style>
+    :root {
+      --bg: #f6f3ee; --card: #ffffff; --ink: #1d1a16; --muted: #6b645a;
+      --line: #e3ddd3; --accent: #c2521d; --accent-ink: #ffffff;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root { --bg: #15130f; --card: #1f1c17; --ink: #f1ece4; --muted: #a39b8f; --line: #332e27; --accent: #ec7a3f; --accent-ink: #15130f; }
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; background: var(--bg); color: var(--ink); font: 16px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif; }
+    main { max-width: 960px; margin: 0 auto; padding: 48px 16px 64px; }
+    h1 { font-size: clamp(28px, 5vw, 40px); margin: 0 0 4px; letter-spacing: -0.02em; }
+    .lead { color: var(--muted); margin: 0 0 32px; }
+    .grid { display: grid; gap: 16px; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); }
+    .card { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 20px; display: flex; flex-direction: column; gap: 12px; }
+    .card h2 { font-size: 18px; margin: 0; }
+    .card p { margin: 0; color: var(--muted); flex: 1; }
+    .versions { display: flex; flex-wrap: wrap; gap: 8px; }
+    .versions a { text-decoration: none; padding: 6px 12px; border-radius: 8px; border: 1px solid var(--line); color: var(--ink); font-size: 14px; }
+    .versions a:first-child { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); font-weight: 600; }
+    .versions a:hover { border-color: var(--accent); }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Agent-lekplats</h1>
+    <p class="lead">Prototyper och experiment. Klicka för att spela direkt i webbläsaren.</p>
+    <div class="grid" id="grid"></div>
+  </main>
+  <script>
+    fetch("games.json").then(r => r.json()).then(games => {
+      const grid = document.getElementById("grid");
+      for (const g of games) {
+        const card = document.createElement("article");
+        card.className = "card";
+        const h = document.createElement("h2"); h.textContent = g.title;
+        const p = document.createElement("p"); p.textContent = g.description;
+        const v = document.createElement("div"); v.className = "versions";
+        g.versions.forEach((ver, i) => {
+          const a = document.createElement("a");
+          a.href = ver.path + "/";
+          a.textContent = i === 0 ? "Spela" + (g.versions.length > 1 ? " · " + ver.label : "") : ver.label;
+          v.append(a);
+        });
+        card.append(h, p, v);
+        grid.append(card);
+      }
+    });
+  </script>
+</body>
+</html>
