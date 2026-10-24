@@ -10,6 +10,7 @@
     "tags": ["Inkrementellt"],
     "versions": [
       { "id": "latest", "label": "Mer juicy", "path": "games/logistik/latest", "note": "Senaste versionen" },
+      { "id": "mobile", "label": "Mobil", "path": "games/logistik/mobile", "note": "Mobil UI-version — öppnas automatiskt på mobilen" },
       { "id": "v1", "label": "v1", "path": "games/logistik/v1", "note": "Första versionen" }
     ]
   },
