@@ -3,55 +3,1362 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Agent-lekplats</title>
+  <title>Välj spel — Agent-lekplats</title>
+  <meta name="description" content="Välj bland prototyperna på Agent-lekplats och spela direkt i webbläsaren." />
+  <meta name="color-scheme" content="light dark" />
+  <meta name="theme-color" media="(prefers-color-scheme: light)" content="#f7f4ef" />
+  <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#12100e" />
   <style>
     :root {
-      --bg: #f6f3ee; --card: #ffffff; --ink: #1d1a16; --muted: #6b645a;
-      --line: #e3ddd3; --accent: #c2521d; --accent-ink: #ffffff;
+      --bg: #f7f4ef;
+      --bg-soft: #ece5da;
+      --surface: #fffdfa;
+      --surface-2: #f3ede4;
+      --ink: #1d1a16;
+      --muted: #6b645a;
+      --line: #e2dbd0;
+      --brand: #c2521d;
+      --brand-ink: #ffffff;
+      --brand-soft: rgba(194, 82, 29, 0.12);
+      --shadow: 0 1px 2px rgba(29, 26, 22, 0.05), 0 14px 30px -18px rgba(29, 26, 22, 0.35);
+      --shadow-lift: 0 2px 4px rgba(29, 26, 22, 0.06), 0 26px 50px -24px rgba(29, 26, 22, 0.45);
+      --radius: 18px;
+      --ease: cubic-bezier(0.22, 0.61, 0.36, 1);
     }
     @media (prefers-color-scheme: dark) {
-      :root { --bg: #15130f; --card: #1f1c17; --ink: #f1ece4; --muted: #a39b8f; --line: #332e27; --accent: #ec7a3f; --accent-ink: #15130f; }
+      :root {
+        --bg: #12100e;
+        --bg-soft: #1a1613;
+        --surface: #1d1a16;
+        --surface-2: #262119;
+        --ink: #f4efe6;
+        --muted: #a89f92;
+        --line: #332e27;
+        --brand: #ec7a3f;
+        --brand-ink: #15130f;
+        --brand-soft: rgba(236, 122, 63, 0.16);
+        --shadow: 0 1px 2px rgba(0, 0, 0, 0.4), 0 16px 34px -20px rgba(0, 0, 0, 0.8);
+        --shadow-lift: 0 2px 6px rgba(0, 0, 0, 0.5), 0 30px 60px -26px rgba(0, 0, 0, 0.9);
+      }
     }
+
     * { box-sizing: border-box; }
-    body { margin: 0; background: var(--bg); color: var(--ink); font: 16px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif; }
-    main { max-width: 960px; margin: 0 auto; padding: 48px 16px 64px; }
-    h1 { font-size: clamp(28px, 5vw, 40px); margin: 0 0 4px; letter-spacing: -0.02em; }
-    .lead { color: var(--muted); margin: 0 0 32px; }
-    .grid { display: grid; gap: 16px; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); }
-    .card { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 20px; display: flex; flex-direction: column; gap: 12px; }
-    .card h2 { font-size: 18px; margin: 0; }
-    .card p { margin: 0; color: var(--muted); flex: 1; }
-    .versions { display: flex; flex-wrap: wrap; gap: 8px; }
-    .versions a { text-decoration: none; padding: 6px 12px; border-radius: 8px; border: 1px solid var(--line); color: var(--ink); font-size: 14px; }
-    .versions a:first-child { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); font-weight: 600; }
-    .versions a:hover { border-color: var(--accent); }
+    html { -webkit-text-size-adjust: 100%; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font: 16px/1.55 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+    }
+    body::before {
+      content: "";
+      position: fixed;
+      inset: -20% -10% auto -10%;
+      height: 78vh;
+      z-index: 0;
+      pointer-events: none;
+      background:
+        radial-gradient(46% 58% at 16% 0%, rgba(224, 138, 52, 0.20), transparent 72%),
+        radial-gradient(38% 50% at 84% 4%, rgba(208, 82, 63, 0.14), transparent 72%);
+      filter: blur(6px);
+    }
+    @media (prefers-color-scheme: dark) {
+      body::before {
+        background:
+          radial-gradient(48% 60% at 16% 0%, rgba(236, 122, 63, 0.16), transparent 72%),
+          radial-gradient(40% 52% at 84% 4%, rgba(208, 82, 63, 0.13), transparent 72%);
+      }
+    }
+    body::after {
+      content: "";
+      position: fixed;
+      inset: 0;
+      z-index: 1;
+      pointer-events: none;
+      opacity: 0.04;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E");
+    }
+    @media (prefers-color-scheme: dark) { body::after { opacity: 0.055; } }
+
+    a { color: inherit; }
+    button { font: inherit; color: inherit; }
+    :focus-visible { outline: 2px solid var(--brand); outline-offset: 3px; }
+    .sr-only {
+      position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+      overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+    }
+    .skip {
+      position: absolute; left: 16px; top: -60px; z-index: 200;
+      background: var(--surface); color: var(--ink); border: 1px solid var(--line);
+      padding: 10px 16px; border-radius: 10px; text-decoration: none;
+      transition: top 0.18s var(--ease);
+    }
+    .skip:focus { top: 16px; }
+
+    /* ---------- Header ---------- */
+    .site-header {
+      position: relative;
+      z-index: 2;
+      max-width: 1080px;
+      margin: 0 auto;
+      padding: 24px 20px 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+    .brand {
+      display: inline-flex; align-items: center; gap: 10px;
+      text-decoration: none; font-weight: 650; letter-spacing: -0.015em;
+      font-size: 15.5px;
+    }
+    .mark {
+      width: 30px; height: 30px; border-radius: 9px;
+      display: grid; place-items: center;
+      background: linear-gradient(150deg, var(--brand), #8f3a12);
+      color: #ffe9d6;
+      box-shadow: 0 6px 16px -8px rgba(194, 82, 29, 0.9);
+    }
+    @media (prefers-color-scheme: dark) {
+      .mark { background: linear-gradient(150deg, #f4a166, var(--brand)); color: #2a1509; }
+    }
+    .mark svg { width: 17px; height: 17px; }
+    .header-meta {
+      font-size: 13px; color: var(--muted);
+      font-variant-numeric: tabular-nums;
+      border: 1px solid var(--line);
+      padding: 5px 12px; border-radius: 999px;
+      background: color-mix(in srgb, var(--surface) 60%, transparent);
+    }
+
+    /* ---------- Layout ---------- */
+    main {
+      position: relative;
+      z-index: 2;
+      max-width: 1080px;
+      margin: 0 auto;
+      padding: 40px 20px calc(150px + env(safe-area-inset-bottom));
+    }
+    .eyebrow {
+      display: inline-flex; align-items: center; gap: 8px;
+      margin: 0 0 14px;
+      font-size: 12px; font-weight: 650; letter-spacing: 0.14em; text-transform: uppercase;
+      color: var(--brand);
+    }
+    .eyebrow::before {
+      content: ""; width: 22px; height: 1px; background: currentColor; opacity: 0.6;
+    }
+    h1 {
+      font-family: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif;
+      font-size: clamp(32px, 6vw, 52px);
+      line-height: 1.04;
+      letter-spacing: -0.025em;
+      font-weight: 600;
+      margin: 0 0 12px;
+      text-wrap: balance;
+      max-width: 18ch;
+    }
+    .lead {
+      margin: 0 0 34px;
+      max-width: 56ch;
+      color: var(--muted);
+      font-size: clamp(15px, 2vw, 17px);
+      text-wrap: pretty;
+    }
+    .lead kbd {
+      font: inherit; font-size: 0.86em;
+      border: 1px solid var(--line); background: var(--surface);
+      border-radius: 6px; padding: 1px 6px; color: var(--ink);
+      box-shadow: 0 1px 0 var(--line);
+    }
+
+    /* ---------- Toolbar ---------- */
+    .toolbar {
+      display: flex; flex-wrap: wrap; align-items: center; gap: 12px;
+      margin-bottom: 22px;
+    }
+    .search {
+      position: relative; flex: 1 1 230px; min-width: 200px;
+      display: flex; align-items: center;
+    }
+    .search svg {
+      position: absolute; left: 13px; width: 17px; height: 17px;
+      color: var(--muted); pointer-events: none;
+    }
+    .search input {
+      width: 100%;
+      padding: 11px 40px 11px 38px;
+      font-size: 14.5px;
+      color: var(--ink);
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      transition: border-color 0.16s var(--ease), box-shadow 0.16s var(--ease);
+    }
+    .search input::placeholder { color: var(--muted); opacity: 0.85; }
+    .search input:focus {
+      outline: none;
+      border-color: var(--brand);
+      box-shadow: 0 0 0 3px var(--brand-soft);
+    }
+    .search .slash {
+      position: absolute; right: 10px;
+      font-size: 11px; color: var(--muted);
+      border: 1px solid var(--line); border-radius: 5px;
+      padding: 1px 6px; pointer-events: none; background: var(--bg-soft);
+      transition: opacity 0.15s var(--ease);
+    }
+    .search input:not(:placeholder-shown) ~ .slash { opacity: 0; }
+    /* Esc clears the field; the native clear button clashes with the / hint */
+    .search input::-webkit-search-cancel-button { display: none; -webkit-appearance: none; }
+    .chips { display: flex; flex-wrap: wrap; gap: 7px; }
+    .chip {
+      appearance: none; cursor: pointer;
+      padding: 7px 13px; border-radius: 999px;
+      border: 1px solid var(--line);
+      background: transparent; color: var(--muted);
+      font-size: 13px; font-weight: 550;
+      transition: color 0.15s var(--ease), border-color 0.15s var(--ease), background 0.15s var(--ease);
+    }
+    .chip:hover { color: var(--ink); border-color: color-mix(in srgb, var(--brand) 45%, var(--line)); }
+    .chip[aria-pressed="true"] {
+      background: var(--ink); border-color: var(--ink); color: var(--bg);
+    }
+    .shuffle {
+      margin-left: auto;
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 10px 16px; border-radius: 12px; cursor: pointer;
+      border: 1px solid var(--line); background: var(--surface);
+      color: var(--ink); font-size: 13.5px; font-weight: 600;
+      transition: transform 0.16s var(--ease), border-color 0.16s var(--ease), background 0.16s var(--ease);
+    }
+    .shuffle:hover { border-color: var(--brand); background: var(--brand-soft); }
+    .shuffle:active { transform: scale(0.98); }
+    .shuffle svg { width: 16px; height: 16px; }
+
+    /* ---------- Gallery ---------- */
+    .gallery-head {
+      display: flex; align-items: baseline; justify-content: space-between; gap: 12px;
+      margin: 0 0 12px;
+    }
+    .gallery-head h2 {
+      margin: 0; font-size: 13px; font-weight: 650;
+      letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted);
+    }
+    .count { font-size: 12.5px; color: var(--muted); font-variant-numeric: tabular-nums; }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(232px, 1fr));
+      gap: 20px;
+    }
+    .card {
+      position: relative;
+      display: flex; flex-direction: column;
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      overflow: hidden;
+      cursor: pointer;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+      box-shadow: var(--shadow);
+      transition: transform 0.22s var(--ease), box-shadow 0.22s var(--ease), border-color 0.22s var(--ease);
+      container-type: inline-size;
+    }
+    /* On very narrow cards the genre alone is enough; keep the meta row on one line. */
+    @container (max-width: 262px) {
+      .card-meta .tag:not(.tag-genre) { display: none; }
+    }
+    .card:hover {
+      transform: translateY(-3px);
+      box-shadow: var(--shadow-lift);
+      border-color: color-mix(in srgb, var(--accent, var(--brand)) 50%, var(--line));
+    }
+    .card:focus-visible {
+      outline: 2px solid var(--accent, var(--brand));
+      outline-offset: 3px;
+    }
+    .card.is-selected {
+      border-color: var(--accent, var(--brand));
+      box-shadow:
+        0 0 0 2px var(--accent, var(--brand)),
+        0 22px 44px -24px color-mix(in srgb, var(--accent, var(--brand)) 70%, transparent);
+    }
+    .card.is-selected:hover { transform: translateY(-3px); }
+    .card[hidden] { display: none; }
+
+    .cover {
+      position: relative;
+      aspect-ratio: 16 / 10;
+      overflow: hidden;
+      background: var(--bg-soft);
+    }
+    .cover img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      display: block;
+      opacity: 0;
+      transform: scale(1.02);
+      transition: opacity 0.5s var(--ease), transform 0.6s var(--ease);
+    }
+    .cover img.is-loaded { opacity: 1; transform: scale(1); }
+    .card:hover .cover img.is-loaded { transform: scale(1.045); }
+    .cover::after {
+      content: "";
+      position: absolute; inset: 0;
+      background: linear-gradient(to top, rgba(12, 10, 8, 0.42), transparent 46%);
+      pointer-events: none;
+    }
+    .badge {
+      position: absolute; left: 12px; bottom: 12px; z-index: 1;
+      font-size: 11px; font-weight: 600; letter-spacing: 0.02em;
+      color: #fff;
+      background: rgba(14, 11, 8, 0.58);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      backdrop-filter: blur(8px);
+      padding: 4px 9px; border-radius: 999px;
+    }
+    .badge-last {
+      top: 12px; left: 12px; bottom: auto;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      font-size: 10px;
+      color: #fff;
+      background: color-mix(in srgb, var(--accent, var(--brand)) 82%, #000);
+      border-color: rgba(255, 255, 255, 0.26);
+    }
+    .check {
+      position: absolute; top: 12px; right: 12px; z-index: 1;
+      width: 26px; height: 26px; border-radius: 50%;
+      display: grid; place-items: center;
+      background: var(--accent, var(--brand));
+      color: var(--accent-ink, #17120c);
+      transform: scale(0.6); opacity: 0;
+      transition: transform 0.2s var(--ease), opacity 0.2s var(--ease);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.28);
+    }
+    .check svg { width: 15px; height: 15px; }
+    .card.is-selected .check { transform: scale(1); opacity: 1; }
+
+    .card-body { display: flex; flex-direction: column; gap: 7px; padding: 14px 16px 16px; flex: 1; }
+    .card-body h3 {
+      margin: 0;
+      font-size: 15.8px; font-weight: 650; line-height: 1.32;
+      letter-spacing: -0.012em;
+      text-wrap: balance;
+    }
+    .card-body p {
+      margin: 0;
+      font-size: 14px; color: var(--muted); line-height: 1.5;
+      flex: 1;
+      text-wrap: pretty;
+    }
+    .card-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 5px; margin-top: 4px; }
+    .tag {
+      font-size: 11px; font-weight: 550; color: var(--muted);
+      background: var(--surface-2);
+      border: 1px solid var(--line);
+      padding: 2px 7px; border-radius: 6px;
+      white-space: nowrap;
+    }
+    .tag-genre {
+      color: color-mix(in srgb, var(--accent, var(--brand)) 72%, var(--ink));
+      background: color-mix(in srgb, var(--accent, var(--brand)) 11%, transparent);
+      border-color: color-mix(in srgb, var(--accent, var(--brand)) 30%, var(--line));
+      font-weight: 600;
+    }
+    @media (prefers-color-scheme: dark) {
+      .tag-genre { color: color-mix(in srgb, var(--accent, var(--brand)) 62%, #fff); }
+    }
+
+    .skeleton {
+      border-radius: var(--radius);
+      border: 1px solid var(--line);
+      background: var(--surface);
+      overflow: hidden;
+      height: 340px;
+    }
+    .skeleton::after {
+      content: ""; display: block; width: 100%; height: 100%;
+      background: linear-gradient(100deg, transparent 20%, color-mix(in srgb, var(--ink) 6%, transparent) 42%, transparent 62%);
+      background-size: 220% 100%;
+      animation: shimmer 1.5s infinite linear;
+    }
+    @keyframes shimmer { from { background-position: 160% 0; } to { background-position: -60% 0; } }
+
+    .empty {
+      text-align: center;
+      padding: 56px 20px;
+      border: 1px dashed var(--line);
+      border-radius: var(--radius);
+      color: var(--muted);
+      background: color-mix(in srgb, var(--surface) 50%, transparent);
+    }
+    .empty strong { display: block; color: var(--ink); font-size: 17px; margin-bottom: 6px; }
+    .empty button {
+      margin-top: 16px; cursor: pointer;
+      padding: 9px 16px; border-radius: 10px;
+      border: 1px solid var(--line); background: var(--surface);
+      font-size: 13.5px; font-weight: 600;
+    }
+    .empty button:hover { border-color: var(--brand); color: var(--brand); }
+
+    .error {
+      margin-top: 8px; padding: 20px;
+      border: 1px solid color-mix(in srgb, var(--brand) 45%, var(--line));
+      background: var(--brand-soft);
+      border-radius: var(--radius);
+      font-size: 14.5px;
+    }
+    .error strong { display: block; margin-bottom: 4px; }
+    .error code {
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: 12.5px;
+      background: color-mix(in srgb, var(--ink) 8%, transparent);
+      padding: 1px 5px; border-radius: 4px;
+    }
+    .footnote { margin: 32px 0 0; font-size: 12.5px; color: var(--muted); }
+
+    /* ---------- Launcher ---------- */
+    .launcher {
+      position: fixed;
+      left: 0; right: 0; bottom: 0;
+      z-index: 40;
+      border-top: 1px solid var(--line);
+      background: color-mix(in srgb, var(--bg) 88%, transparent);
+      backdrop-filter: blur(22px) saturate(1.4);
+      -webkit-backdrop-filter: blur(22px) saturate(1.4);
+      padding: 12px 20px calc(12px + env(safe-area-inset-bottom));
+      transform: translateY(100%);
+      opacity: 0;
+      transition: transform 0.42s var(--ease), opacity 0.3s var(--ease);
+    }
+    body.ready .launcher { transform: translateY(0); opacity: 1; }
+    .launcher-inner {
+      max-width: 1080px; margin: 0 auto;
+      display: flex; align-items: center; gap: 16px;
+    }
+    .launch-cover {
+      flex: none;
+      width: 78px; height: 52px;
+      border-radius: 9px; overflow: hidden;
+      border: 1px solid var(--line);
+      background: var(--bg-soft);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.14);
+    }
+    .launch-cover img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .launch-main { min-width: 0; flex: 1; display: flex; flex-direction: column; gap: 5px; }
+    .launch-eyebrow {
+      font-size: 10.5px; font-weight: 650; letter-spacing: 0.13em;
+      text-transform: uppercase; color: var(--muted);
+      display: flex; align-items: center; gap: 6px;
+    }
+    .launch-eyebrow .dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: var(--accent, var(--brand));
+      box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent, var(--brand)) 22%, transparent);
+    }
+    .launch-title {
+      font-size: 15.5px; font-weight: 650; letter-spacing: -0.01em;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .versions { display: flex; flex-wrap: wrap; gap: 5px; }
+    .ver {
+      cursor: pointer;
+      font-size: 11.5px; font-weight: 600;
+      padding: 2px 9px; border-radius: 999px;
+      border: 1px solid var(--line);
+      background: transparent; color: var(--muted);
+      transition: color 0.15s var(--ease), border-color 0.15s var(--ease), background 0.15s var(--ease);
+    }
+    .ver:hover { color: var(--ink); border-color: var(--accent, var(--brand)); }
+    .ver[aria-pressed="true"] {
+      background: var(--accent, var(--brand));
+      border-color: var(--accent, var(--brand));
+      color: var(--accent-ink, #17120c);
+    }
+    .launch-actions { display: flex; align-items: center; gap: 10px; flex: none; }
+    .copy {
+      display: inline-flex; align-items: center; gap: 8px;
+      cursor: pointer;
+      padding: 11px 14px; border-radius: 12px;
+      border: 1px solid var(--line); background: var(--surface);
+      color: var(--muted); font-size: 13px; font-weight: 600;
+      transition: color 0.15s var(--ease), border-color 0.15s var(--ease), background 0.15s var(--ease);
+    }
+    .copy:hover { color: var(--ink); border-color: var(--brand); background: var(--brand-soft); }
+    .copy svg { width: 16px; height: 16px; }
+    .play {
+      display: inline-flex; align-items: center; gap: 10px;
+      cursor: pointer;
+      padding: 12px 16px 12px 22px;
+      border-radius: 12px;
+      border: 1px solid transparent;
+      background: var(--brand);
+      color: var(--brand-ink);
+      font-size: 15px; font-weight: 680; letter-spacing: -0.005em;
+      box-shadow: 0 10px 24px -12px color-mix(in srgb, var(--brand) 80%, transparent);
+      transition: transform 0.16s var(--ease), filter 0.16s var(--ease), box-shadow 0.16s var(--ease);
+    }
+    .play:hover { filter: brightness(1.07); box-shadow: 0 14px 30px -12px color-mix(in srgb, var(--brand) 85%, transparent); }
+    .play:active { transform: scale(0.985); }
+    .play .arrow {
+      width: 26px; height: 26px; border-radius: 8px;
+      display: grid; place-items: center;
+      background: rgba(255, 255, 255, 0.2);
+      transition: transform 0.18s var(--ease);
+    }
+    @media (prefers-color-scheme: dark) {
+      .play .arrow { background: rgba(0, 0, 0, 0.16); }
+    }
+    .play:hover .arrow { transform: translateX(2px); }
+    .play .arrow svg { width: 15px; height: 15px; }
+    .play[disabled] { opacity: 0.55; cursor: default; transform: none; }
+
+    /* ---------- Toast / boot ---------- */
+    .toast {
+      position: fixed;
+      left: 50%; bottom: calc(132px + env(safe-area-inset-bottom));
+      z-index: 90;
+      transform: translate(-50%, 12px);
+      opacity: 0; pointer-events: none;
+      display: flex; align-items: center; gap: 8px;
+      padding: 10px 16px; border-radius: 999px;
+      background: var(--ink); color: var(--bg);
+      font-size: 13px; font-weight: 600;
+      box-shadow: 0 12px 30px -10px rgba(0, 0, 0, 0.5);
+      transition: opacity 0.22s var(--ease), transform 0.22s var(--ease);
+    }
+    .toast.is-on { opacity: 1; transform: translate(-50%, 0); }
+    .toast svg { width: 15px; height: 15px; }
+
+    .boot {
+      position: fixed; inset: 0; z-index: 120;
+      display: grid; place-items: center;
+      opacity: 0; pointer-events: none;
+      background: #0b0907;
+      transition: opacity 0.32s var(--ease);
+    }
+    .boot.is-on { opacity: 1; pointer-events: auto; }
+    .boot-bg {
+      position: absolute; inset: 0;
+      background-size: cover; background-position: center;
+      filter: blur(26px) saturate(1.15) brightness(0.62);
+      transform: scale(1.12);
+      opacity: 0.85;
+    }
+    .boot-veil { position: absolute; inset: 0; background: radial-gradient(60% 60% at 50% 45%, rgba(10, 8, 6, 0.25), rgba(10, 8, 6, 0.86)); }
+    .boot-inner { position: relative; display: grid; justify-items: center; gap: 16px; text-align: center; padding: 24px; }
+    .spinner {
+      width: 30px; height: 30px; border-radius: 50%;
+      border: 2px solid rgba(255, 255, 255, 0.22);
+      border-top-color: var(--brand);
+      animation: spin 0.9s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .boot-title { color: #f6f0e6; font-size: 16px; font-weight: 600; letter-spacing: -0.01em; }
+    .boot-sub { color: rgba(246, 240, 230, 0.56); font-size: 12.5px; letter-spacing: 0.04em; text-transform: uppercase; }
+
+    @media (max-width: 720px) {
+      main { padding-top: 26px; padding-bottom: calc(160px + env(safe-area-inset-bottom)); }
+      .shuffle { margin-left: 0; flex: 1 1 100%; justify-content: center; padding: 11px 16px; }
+      .launch-title {
+        white-space: normal;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        line-height: 1.25;
+      }
+      .launch-cover { display: none; }
+      .launch-main { gap: 4px; }
+      .copy { padding: 11px; }
+      .copy span { display: none; }
+      .play { padding: 12px 12px 12px 16px; font-size: 14.5px; }
+      .play .arrow { width: 22px; height: 22px; }
+      .launcher { padding-left: 14px; padding-right: 14px; }
+      .toast { bottom: calc(150px + env(safe-area-inset-bottom)); }
+    }
+    @media (max-width: 420px) {
+      .header-meta { display: none; }
+      .play { padding: 12px; gap: 6px; }
+      .launch-title { font-size: 14.5px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.001ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.001ms !important;
+      }
+      .card:hover { transform: none; }
+    }
   </style>
 </head>
 <body>
+  <a class="skip" href="#gallery">Hoppa till spellistan</a>
+
+  <header class="site-header">
+    <a class="brand" href="./">
+      <span class="mark" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none">
+          <path d="M12 2.2c3.6 4.3 6.1 7.2 6.1 10.5a6.1 6.1 0 1 1-12.2 0C5.9 9.4 8.4 6.5 12 2.2Z" fill="currentColor"/>
+          <path d="M12 13.1c1.8 2.1 2.7 3.3 2.7 4.6a2.7 2.7 0 1 1-5.4 0c0-1.3.9-2.5 2.7-4.6Z" fill="var(--bg)"/>
+        </svg>
+      </span>
+      Agent-lekplats
+    </a>
+    <span class="header-meta" id="stats">Laddar…</span>
+  </header>
+
   <main>
-    <h1>Agent-lekplats</h1>
-    <p class="lead">Prototyper och experiment. Klicka för att spela direkt i webbläsaren.</p>
-    <div class="grid" id="grid"></div>
+    <p class="eyebrow">Spelväljare</p>
+    <h1>Vad ska vi spela idag?</h1>
+    <p class="lead">
+      Välj ett spel i listan nedan. Det hamnar i listen längst ner — tryck
+      <kbd>Spela</kbd> för att starta, eller <kbd>↵</kbd> när ett kort är valt.
+    </p>
+
+    <div class="toolbar">
+      <div class="search">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <circle cx="11" cy="11" r="7"/><path d="m16.5 16.5 4 4" stroke-linecap="round"/>
+        </svg>
+        <input id="search" type="search" placeholder="Sök spel, tagg eller version…" aria-label="Sök spel" autocomplete="off" />
+        <span class="slash" aria-hidden="true">/</span>
+      </div>
+      <div class="chips" id="chips" role="group" aria-label="Filtrera på kategori"></div>
+      <button class="shuffle" id="shuffle" type="button" title="Välj ett slumpat spel">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="8.5" cy="8.5" r="1.2" fill="currentColor"/><circle cx="15.5" cy="15.5" r="1.2" fill="currentColor"/><circle cx="15.5" cy="8.5" r="1.2" fill="currentColor"/><circle cx="8.5" cy="15.5" r="1.2" fill="currentColor"/>
+        </svg>
+        Slumpa
+      </button>
+    </div>
+
+    <div class="gallery-head" id="gallery">
+      <h2>Spel</h2>
+      <span class="count" id="count"></span>
+    </div>
+
+    <div class="grid" id="grid" role="radiogroup" aria-label="Välj spel">
+      <div class="skeleton" aria-hidden="true"></div>
+      <div class="skeleton" aria-hidden="true"></div>
+      <div class="skeleton" aria-hidden="true"></div>
+      <div class="skeleton" aria-hidden="true"></div>
+    </div>
+
+    <div class="empty" id="empty" hidden>
+      <strong>Inga spel matchar</strong>
+      <span id="emptyText">Prova ett annat sökord eller visa alla.</span>
+      <br />
+      <button type="button" id="clearFilters">Rensa filter</button>
+    </div>
+
+    <div class="error" id="error" hidden>
+      <strong>Kunde inte ladda spellistan</strong>
+      Spelet kan inte hämtas. Öppna sidan via en webbserver (t.ex. <code>python3 -m http.server</code>) i stället för direkt från filsystemet.
+      <br />
+      <button type="button" id="retry">Försök igen</button>
+    </div>
+
+    <p class="footnote">Alla prototyper körs lokalt i webbläsaren — inga konton, ingen installation.</p>
   </main>
+
+  <section class="launcher" id="launcher" aria-label="Valt spel">
+    <div class="launcher-inner">
+      <div class="launch-cover"><img id="launchCover" alt="" width="78" height="52" /></div>
+      <div class="launch-main">
+        <span class="launch-eyebrow"><span class="dot" id="launchDot" aria-hidden="true"></span>Valt spel</span>
+        <span class="launch-title" id="launchTitle">Väljer…</span>
+        <div class="versions" id="launchVersions" role="group" aria-label="Version"></div>
+      </div>
+      <div class="launch-actions">
+        <button class="copy" id="copyBtn" type="button" title="Kopiera länk till valt spel" disabled>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <rect x="9" y="9" width="11" height="11" rx="2.5"/><path d="M15 5.5A2.5 2.5 0 0 0 12.5 3H6.5A3.5 3.5 0 0 0 3 6.5v6A2.5 2.5 0 0 0 5.5 15"/>
+          </svg>
+          <span>Kopiera länk</span>
+        </button>
+        <button class="play" id="playBtn" type="button" disabled>
+          Spela
+          <span class="arrow" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M5 12h13M13 6l6 6-6 6"/>
+            </svg>
+          </span>
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <div class="toast" id="toast" role="status" aria-live="polite">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m4 12.5 5 5L20 6.5"/></svg>
+    <span id="toastText">Länk kopierad</span>
+  </div>
+
+  <div class="boot" id="boot" aria-hidden="true">
+    <div class="boot-bg" id="bootBg"></div>
+    <div class="boot-veil"></div>
+    <div class="boot-inner">
+      <div class="spinner" aria-hidden="true"></div>
+      <div class="boot-title" id="bootTitle">Startar…</div>
+      <div class="boot-sub">Laddar spelet</div>
+    </div>
+  </div>
+
+  <p class="sr-only" id="live" aria-live="polite"></p>
+
+  <noscript>
+    <p style="max-width: 640px; margin: 0 auto; padding: 0 20px 40px;">
+      JavaScript krävs för spelväljaren. Spelen kan öppnas direkt:
+      <a href="games/logistik/latest/">Emberhold</a>,
+      <a href="games/hybrid-logistik/">Miniature World</a>,
+      <a href="games/mysig-by/">Tiny Logistics</a>,
+      <a href="games/duell/">SWAY</a>.
+    </p>
+  </noscript>
+
   <script>
-    fetch("games.json").then(r => r.json()).then(games => {
-      const grid = document.getElementById("grid");
-      for (const g of games) {
-        const card = document.createElement("article");
-        card.className = "card";
-        const h = document.createElement("h2"); h.textContent = g.title;
-        const p = document.createElement("p"); p.textContent = g.description;
-        const v = document.createElement("div"); v.className = "versions";
-        g.versions.forEach((ver, i) => {
-          const a = document.createElement("a");
-          a.href = ver.path + "/";
-          a.textContent = i === 0 ? "Spela" + (g.versions.length > 1 ? " · " + ver.label : "") : ver.label;
-          v.append(a);
-        });
-        card.append(h, p, v);
-        grid.append(card);
+    (function () {
+      "use strict";
+
+      var grid = document.getElementById("grid");
+      var chipsEl = document.getElementById("chips");
+      var searchEl = document.getElementById("search");
+      var shuffleEl = document.getElementById("shuffle");
+      var countEl = document.getElementById("count");
+      var statsEl = document.getElementById("stats");
+      var emptyEl = document.getElementById("empty");
+      var emptyTextEl = document.getElementById("emptyText");
+      var clearFiltersEl = document.getElementById("clearFilters");
+      var errorEl = document.getElementById("error");
+      var retryEl = document.getElementById("retry");
+      var launchCover = document.getElementById("launchCover");
+      var launchTitle = document.getElementById("launchTitle");
+      var launchDot = document.getElementById("launchDot");
+      var launchVersions = document.getElementById("launchVersions");
+      var playBtn = document.getElementById("playBtn");
+      var copyBtn = document.getElementById("copyBtn");
+      var toastEl = document.getElementById("toast");
+      var toastText = document.getElementById("toastText");
+      var bootEl = document.getElementById("boot");
+      var bootBg = document.getElementById("bootBg");
+      var bootTitle = document.getElementById("bootTitle");
+      var liveEl = document.getElementById("live");
+
+      var STORE_KEY = "agent-lekplats:last-played";
+
+      var state = {
+        games: [],
+        slug: null,
+        versionId: null,
+        genre: "Alla",
+        q: "",
+        ready: false,
+        lastPlayed: null
+      };
+
+      function readLastPlayed() {
+        try {
+          var raw = window.localStorage.getItem(STORE_KEY);
+          return raw ? JSON.parse(raw) : null;
+        } catch (err) {
+          return null;
+        }
       }
-    });
+
+      function writeLastPlayed(entry) {
+        try {
+          window.localStorage.setItem(STORE_KEY, JSON.stringify(entry));
+        } catch (err) { /* private mode — ignore */ }
+      }
+
+      var reduceMotion = false;
+      try {
+        reduceMotion = !!(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
+      } catch (err) { /* ignore */ }
+      var toastTimer = null;
+
+      /* ---------- helpers ---------- */
+      function norm(value) {
+        return String(value == null ? "" : value)
+          .toLowerCase()
+          .normalize("NFD")
+          .replace(/[\u0300-\u036f]/g, "");
+      }
+
+      function hexToRgb(hex) {
+        var m = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(String(hex || "").trim());
+        if (!m) return { r: 194, g: 82, b: 29 };
+        return { r: parseInt(m[1], 16), g: parseInt(m[2], 16), b: parseInt(m[3], 16) };
+      }
+
+      function inkFor(hex) {
+        var c = hexToRgb(hex);
+        var lin = [c.r, c.g, c.b].map(function (v) {
+          v /= 255;
+          return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4);
+        });
+        var luminance = 0.2126 * lin[0] + 0.7152 * lin[1] + 0.0722 * lin[2];
+        return luminance > 0.34 ? "#17120c" : "#ffffff";
+      }
+
+      function el(tag, props) {
+        var node = document.createElement(tag);
+        props = props || {};
+        Object.keys(props).forEach(function (k) {
+          var v = props[k];
+          if (v == null) return;
+          if (k === "class") node.className = v;
+          else if (k === "text") node.textContent = v;
+          else if (k === "html") node.innerHTML = v;
+          else node.setAttribute(k, v);
+        });
+        return node;
+      }
+
+      function currentGame() {
+        for (var i = 0; i < state.games.length; i++) {
+          if (state.games[i].slug === state.slug) return state.games[i];
+        }
+        return null;
+      }
+
+      function currentVersion() {
+        var g = currentGame();
+        if (!g) return null;
+        for (var i = 0; i < g.versions.length; i++) {
+          if (g.versions[i].id === state.versionId) return g.versions[i];
+        }
+        return g.versions[0] || null;
+      }
+
+      function gameUrl(g, v) {
+        var path = String(v.path || "").replace(/\/+$/, "");
+        return path + "/";
+      }
+
+      function matches(g) {
+        if (state.genre !== "Alla" && g.genre !== state.genre) return false;
+        var q = norm(state.q).trim();
+        if (!q) return true;
+        var haystack = [g.title, g.short, g.slug, g.description, g.genre]
+          .concat(g.tags || [])
+          .concat((g.versions || []).map(function (v) { return v.label + " " + (v.note || ""); }))
+          .join(" ");
+        return norm(haystack).indexOf(q) !== -1;
+      }
+
+      function visibleGames() {
+        return state.games.filter(matches);
+      }
+
+      function cardFor(slug) {
+        var cards = grid.querySelectorAll(".card");
+        for (var i = 0; i < cards.length; i++) {
+          if (cards[i].getAttribute("data-slug") === slug) return cards[i];
+        }
+        return null;
+      }
+
+      function toast(message) {
+        toastText.textContent = message;
+        toastEl.classList.add("is-on");
+        window.clearTimeout(toastTimer);
+        toastTimer = window.setTimeout(function () {
+          toastEl.classList.remove("is-on");
+        }, 2000);
+      }
+
+      /* ---------- render ---------- */
+      // Chips are built once and only their pressed state is updated, so
+      // keyboard focus survives filtering.
+      function renderChips() {
+        chipsEl.innerHTML = "";
+        var genres = ["Alla"];
+        state.games.forEach(function (g) {
+          if (g.genre && genres.indexOf(g.genre) === -1) genres.push(g.genre);
+        });
+        genres.forEach(function (genre) {
+          var chip = el("button", {
+            type: "button",
+            class: "chip",
+            text: genre,
+            "data-genre": genre,
+            "aria-pressed": String(state.genre === genre)
+          });
+          chip.addEventListener("click", function () {
+            state.genre = genre;
+            updateChips();
+            applyFilters();
+          });
+          chipsEl.appendChild(chip);
+        });
+      }
+
+      function updateChips() {
+        Array.prototype.forEach.call(chipsEl.children, function (chip) {
+          chip.setAttribute("aria-pressed", String(chip.getAttribute("data-genre") === state.genre));
+        });
+      }
+
+      function renderCards() {
+        grid.innerHTML = "";
+        state.games.forEach(function (g, index) {
+          var accentInk = inkFor(g.accent);
+          var card = el("div", {
+            class: "card",
+            role: "radio",
+            "aria-checked": "false",
+            "aria-label": g.title + (g.description ? ". " + g.description : ""),
+            tabindex: "-1",
+            "data-slug": g.slug
+          });
+          card.style.setProperty("--accent", g.accent || "#c2521d");
+          card.style.setProperty("--accent-ink", accentInk);
+
+          var cover = el("div", { class: "cover" });
+          var img = el("img", {
+            src: g.cover,
+            alt: "",
+            width: "960",
+            height: "600",
+            loading: index < 2 ? "eager" : "lazy",
+            decoding: "async"
+          });
+          if (index === 0) img.setAttribute("fetchpriority", "high");
+          function markLoaded() { img.classList.add("is-loaded"); }
+          img.addEventListener("load", markLoaded);
+          if (img.complete && img.naturalWidth) markLoaded();
+          cover.appendChild(img);
+
+          var versionCount = (g.versions || []).length;
+          if (versionCount > 1) {
+            cover.appendChild(el("span", {
+              class: "badge",
+              text: versionCount + " versioner"
+            }));
+          }
+          var last = state.lastPlayed;
+          if (last && last.slug === g.slug) {
+            cover.appendChild(el("span", {
+              class: "badge badge-last",
+              text: "Senast spelad",
+              title: "Du spelade det här senast"
+            }));
+          }
+          cover.appendChild(el("span", {
+            class: "check",
+            "aria-hidden": "true",
+            html: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m4.5 12.5 4.8 4.8L19.5 7"/></svg>'
+          }));
+
+          var body = el("div", { class: "card-body" });
+          body.appendChild(el("h3", { text: g.title }));
+          body.appendChild(el("p", { text: g.description || "" }));
+
+          var meta = el("div", { class: "card-meta" });
+          if (g.genre) {
+            meta.appendChild(el("span", { class: "tag tag-genre", text: g.genre }));
+          }
+          // The genre chip plus one tag always fits on one row; the full tag
+          // list stays searchable via matches().
+          var genreKey = norm(g.genre);
+          var shownTags = 0;
+          (g.tags || []).forEach(function (t) {
+            if (shownTags >= 1 || norm(t) === genreKey) return; // never repeat the genre
+            meta.appendChild(el("span", { class: "tag", text: t }));
+            shownTags++;
+          });
+          body.appendChild(meta);
+
+          card.appendChild(cover);
+          card.appendChild(body);
+
+          card.addEventListener("click", function () {
+            select(g.slug, null, { announce: true });
+          });
+          card.addEventListener("dblclick", function () {
+            select(g.slug, null, { announce: false });
+            play();
+          });
+          card.addEventListener("keydown", function (event) {
+            onCardKeydown(event, g);
+          });
+
+          grid.appendChild(card);
+        });
+      }
+
+      function renderStats() {
+        var versions = state.games.reduce(function (sum, g) {
+          return sum + (g.versions || []).length;
+        }, 0);
+        statsEl.textContent = state.games.length + " spel · " + versions + " versioner";
+      }
+
+      function renderLauncher() {
+        var g = currentGame();
+        if (!g) return;
+        var accent = g.accent || "#c2521d";
+        document.documentElement.style.setProperty("--accent", accent);
+        document.documentElement.style.setProperty("--accent-ink", inkFor(accent));
+
+        launchTitle.textContent = g.title;
+        launchCover.src = g.cover;
+        launchDot.style.background = accent;
+        launchCover.alt = "";
+
+        launchVersions.innerHTML = "";
+        (g.versions || []).forEach(function (v) {
+          var pill = el("button", {
+            type: "button",
+            class: "ver",
+            text: v.label,
+            "aria-pressed": String(v.id === state.versionId),
+            title: v.note || v.label
+          });
+          pill.addEventListener("click", function () {
+            select(g.slug, v.id, { announce: true });
+            // The pills are re-rendered by select(); move focus to the new match
+            // so keyboard users are not dropped back to the document.
+            var active = launchVersions.querySelector('[aria-pressed="true"]');
+            if (active && typeof active.focus === "function") active.focus();
+          });
+          launchVersions.appendChild(pill);
+        });
+        launchVersions.hidden = (g.versions || []).length === 0;
+
+        var version = currentVersion();
+        playBtn.setAttribute("aria-label", "Spela " + g.title + (version ? " (" + version.label + ")" : ""));
+      }
+
+      /* ---------- selection ---------- */
+      function updateCards() {
+        var cards = grid.querySelectorAll(".card");
+        for (var i = 0; i < cards.length; i++) {
+          var isSelected = cards[i].getAttribute("data-slug") === state.slug;
+          cards[i].classList.toggle("is-selected", isSelected);
+          cards[i].setAttribute("aria-checked", String(isSelected));
+          cards[i].tabIndex = isSelected ? 0 : -1;
+        }
+      }
+
+      function focusCard(slug) {
+        var card = cardFor(slug);
+        if (card && !card.hidden) card.focus({ preventScroll: false });
+      }
+
+      function updateUrl() {
+        if (!state.slug) return;
+        try {
+          var url = new URL(window.location.href);
+          url.searchParams.set("game", state.slug);
+          url.searchParams.set("v", state.versionId || "");
+          window.history.replaceState(null, "", url);
+        } catch (err) { /* ignore */ }
+      }
+
+      function select(slug, versionId, options) {
+        options = options || {};
+        var g = null;
+        for (var i = 0; i < state.games.length; i++) {
+          if (state.games[i].slug === slug) g = state.games[i];
+        }
+        if (!g) return;
+
+        var nextVersion = null;
+        if (versionId) {
+          for (var j = 0; j < g.versions.length; j++) {
+            if (g.versions[j].id === versionId) nextVersion = g.versions[j];
+          }
+        }
+        if (!nextVersion) nextVersion = g.versions[0] || null;
+
+        state.slug = g.slug;
+        state.versionId = nextVersion ? nextVersion.id : null;
+
+        updateCards();
+        renderLauncher();
+        if (options.updateUrl !== false) updateUrl();
+
+        if (options.announce !== false) {
+          liveEl.textContent = "Valt spel: " + g.title +
+            (nextVersion ? ", version " + nextVersion.label : "") + ".";
+        }
+      }
+
+      /* ---------- filtering ---------- */
+      function applyFilters() {
+        var visible = visibleGames();
+        var visibleSlugs = visible.map(function (g) { return g.slug; });
+
+        state.games.forEach(function (g) {
+          var card = cardFor(g.slug);
+          if (card) card.hidden = visibleSlugs.indexOf(g.slug) === -1;
+        });
+
+        countEl.textContent = "Visar " + visible.length + " av " + state.games.length;
+        emptyEl.hidden = visible.length > 0;
+        if (visible.length === 0) {
+          var reason;
+          if (state.q.trim()) {
+            reason = "Sökningen på ”" + state.q.trim() + "” gav ingen träff.";
+          } else if (state.genre !== "Alla") {
+            reason = "Kategorin " + state.genre + " har inga spel just nu.";
+          } else {
+            reason = "Prova ett annat sökord eller visa alla.";
+          }
+          emptyTextEl.textContent = reason + " Rensa filtret för att se alla spel.";
+        }
+
+        // keep exactly one visible card in the tab order
+        var focusSlug = visibleSlugs.indexOf(state.slug) !== -1 ? state.slug : visibleSlugs[0];
+        var cards = grid.querySelectorAll(".card");
+        for (var i = 0; i < cards.length; i++) {
+          var slug = cards[i].getAttribute("data-slug");
+          cards[i].tabIndex = slug === focusSlug ? 0 : -1;
+        }
+      }
+
+      /* ---------- actions ---------- */
+      function play() {
+        var g = currentGame();
+        var v = currentVersion();
+        if (!g || !v) return;
+        var href = gameUrl(g, v);
+
+        state.lastPlayed = { slug: g.slug, versionId: v.id };
+        writeLastPlayed(state.lastPlayed);
+
+        bootTitle.textContent = "Startar " + (g.short || g.title);
+        bootBg.style.backgroundImage = 'url("' + g.cover + '")';
+        bootEl.classList.add("is-on");
+        bootEl.setAttribute("aria-hidden", "false");
+
+        if (reduceMotion) {
+          window.location.href = href;
+          return;
+        }
+        window.setTimeout(function () {
+          window.location.href = href;
+        }, 420);
+      }
+
+      function shuffled() {
+        var visible = visibleGames();
+        if (!visible.length) {
+          toast("Inga spel matchar filtret");
+          return;
+        }
+        var pool = visible.filter(function (g) { return g.slug !== state.slug; });
+        if (!pool.length) pool = visible;
+        var pick = pool[Math.floor(Math.random() * pool.length)];
+        select(pick.slug, null, { announce: true });
+        focusCard(pick.slug);
+        var card = cardFor(pick.slug);
+        if (card) card.scrollIntoView({ block: "nearest", behavior: reduceMotion ? "auto" : "smooth" });
+      }
+
+      function copyLink() {
+        var g = currentGame();
+        if (!g) return;
+        var url;
+        try {
+          url = new URL(window.location.href);
+          url.searchParams.set("game", state.slug);
+          url.searchParams.set("v", state.versionId || "");
+        } catch (err) {
+          url = null;
+        }
+        var text = url ? url.href : window.location.href;
+
+        function fallback() {
+          try {
+            var area = document.createElement("textarea");
+            area.value = text;
+            area.setAttribute("readonly", "");
+            area.style.position = "fixed";
+            area.style.top = "-1000px";
+            document.body.appendChild(area);
+            area.select();
+            document.execCommand("copy");
+            document.body.removeChild(area);
+            toast("Länk kopierad");
+          } catch (e) {
+            window.prompt("Kopiera länken till spelet:", text);
+          }
+        }
+
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(text).then(function () {
+            toast("Länk kopierad");
+          }).catch(fallback);
+        } else {
+          fallback();
+        }
+      }
+
+      /* ---------- keyboard ---------- */
+      function onCardKeydown(event, g) {
+        var key = event.key;
+        var navigational = ["ArrowRight", "ArrowDown", "ArrowLeft", "ArrowUp", "Home", "End"];
+        if (navigational.indexOf(key) !== -1) {
+          event.preventDefault();
+          var visible = visibleGames();
+          if (!visible.length) return;
+          var index = -1;
+          for (var i = 0; i < visible.length; i++) {
+            if (visible[i].slug === g.slug) index = i;
+          }
+          if (index === -1) index = 0;
+          var nextIndex = index;
+          if (key === "ArrowRight" || key === "ArrowDown") nextIndex = (index + 1) % visible.length;
+          else if (key === "ArrowLeft" || key === "ArrowUp") nextIndex = (index - 1 + visible.length) % visible.length;
+          else if (key === "Home") nextIndex = 0;
+          else if (key === "End") nextIndex = visible.length - 1;
+          var next = visible[nextIndex];
+          select(next.slug, null, { announce: true });
+          focusCard(next.slug);
+          return;
+        }
+        if (key === "Enter") {
+          event.preventDefault();
+          if (state.slug === g.slug) play();
+          else select(g.slug, null, { announce: true });
+          return;
+        }
+        if (key === " " || key === "Spacebar") {
+          event.preventDefault();
+          select(g.slug, null, { announce: true });
+        }
+      }
+
+      document.addEventListener("keydown", function (event) {
+        var target = event.target;
+        var typing = target && (target.tagName === "INPUT" || target.tagName === "TEXTAREA" || target.isContentEditable);
+        if (event.key === "/" && !typing && !event.metaKey && !event.ctrlKey) {
+          event.preventDefault();
+          searchEl.focus();
+          searchEl.select();
+        }
+      });
+
+      searchEl.addEventListener("input", function () {
+        state.q = searchEl.value;
+        applyFilters();
+      });
+      searchEl.addEventListener("keydown", function (event) {
+        if (event.key === "Escape") {
+          searchEl.value = "";
+          state.q = "";
+          applyFilters();
+          searchEl.blur();
+          return;
+        }
+        if (event.key === "Enter") {
+          event.preventDefault();
+          var visible = visibleGames();
+          if (!visible.length) {
+            toast("Inga spel matchar");
+            return;
+          }
+          var pick = visible[0];
+          select(pick.slug, null, { announce: true });
+          focusCard(pick.slug);
+        }
+      });
+
+      clearFiltersEl.addEventListener("click", function () {
+        state.q = "";
+        state.genre = "Alla";
+        searchEl.value = "";
+        updateChips();
+        applyFilters();
+        searchEl.focus();
+      });
+
+      shuffleEl.addEventListener("click", shuffled);
+      playBtn.addEventListener("click", play);
+      copyBtn.addEventListener("click", copyLink);
+      retryEl.addEventListener("click", function () { window.location.reload(); });
+
+      /* ---------- boot ---------- */
+      function showError(err) {
+        errorEl.hidden = false;
+        statsEl.textContent = "Inga spel";
+        countEl.textContent = "";
+        grid.innerHTML = "";
+        grid.hidden = true;
+        console.error("Kunde inte ladda games.json:", err);
+      }
+
+      function init() {
+        if (typeof window.fetch !== "function") {
+          showError(new Error("fetch stöds inte"));
+          return;
+        }
+        fetch("games.json", { cache: "no-store" })
+          .then(function (res) {
+            if (!res.ok) throw new Error("HTTP " + res.status);
+            return res.json();
+          })
+          .then(function (data) {
+            if (!Array.isArray(data) || !data.length) throw new Error("Tom spellista");
+            state.games = data.filter(function (g) {
+              return g && g.slug && Array.isArray(g.versions) && g.versions.length;
+            });
+            if (!state.games.length) throw new Error("Inga giltiga spel");
+
+            var params = new URLSearchParams(window.location.search);
+            var wanted = params.get("game");
+
+            state.lastPlayed = readLastPlayed();
+            if (state.lastPlayed) {
+              var stillExists = state.games.some(function (g) {
+                return g.slug === state.lastPlayed.slug;
+              });
+              if (!stillExists) state.lastPlayed = null;
+            }
+
+            renderStats();
+            renderChips();
+            renderCards();
+
+            var fromUrl = null;
+            var lastGame = null;
+            state.games.forEach(function (g) {
+              if (g.slug === wanted) fromUrl = g;
+              if (state.lastPlayed && g.slug === state.lastPlayed.slug) lastGame = g;
+            });
+
+            var first = fromUrl || lastGame || state.games[0];
+            var initialVersion = params.get("v");
+            if (!initialVersion && !fromUrl && state.lastPlayed && lastGame) {
+              initialVersion = state.lastPlayed.versionId;
+            }
+            select(first.slug, initialVersion, { announce: false });
+
+            applyFilters();
+            state.ready = true;
+            playBtn.disabled = false;
+            copyBtn.disabled = false;
+            document.body.classList.add("ready");
+
+            // Preload the covers that are likely to be seen next.
+            state.games.slice(0, 4).forEach(function (g) {
+              var pre = new Image();
+              pre.src = g.cover;
+            });
+          })
+          .catch(showError);
+      }
+
+      init();
+    })();
   </script>
 </body>
 </html>
