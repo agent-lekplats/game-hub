@@ -841,6 +841,32 @@
         return path + "/";
       }
 
+      /* Mobile UI: phones and tablets default to the "mobile" version of a
+         game when one exists (the game pages also auto-route, this just skips
+         the detour). A touch laptop with a fine pointer keeps the desktop build. */
+      function isMobileUI() {
+        try {
+          var ua = navigator.userAgent || "";
+          var uaMobile = /iPhone|iPod|Android.+Mobile|Windows Phone|Mobile Safari|Silk|Kindle|Opera Mini|IEMobile/i.test(ua);
+          var ipadLike = /Macintosh/.test(ua) && (navigator.maxTouchPoints || 0) > 1;
+          var coarse = window.matchMedia ? window.matchMedia("(pointer: coarse)").matches : false;
+          var fine = window.matchMedia ? window.matchMedia("(pointer: fine)").matches : false;
+          return uaMobile || ipadLike || ((coarse && !fine) && window.innerWidth < 1100);
+        } catch (err) {
+          return false;
+        }
+      }
+
+      function defaultVersion(g) {
+        var vs = g.versions || [];
+        if (isMobileUI()) {
+          for (var i = 0; i < vs.length; i++) {
+            if (vs[i].id === "mobile") return vs[i];
+          }
+        }
+        return vs[0] || null;
+      }
+
       function matches(g) {
         if (state.genre !== "Alla" && g.genre !== state.genre) return false;
         var q = norm(state.q).trim();
@@ -1076,7 +1102,7 @@
             if (g.versions[j].id === versionId) nextVersion = g.versions[j];
           }
         }
-        if (!nextVersion) nextVersion = g.versions[0] || null;
+        if (!nextVersion) nextVersion = defaultVersion(g);
 
         state.slug = g.slug;
         state.versionId = nextVersion ? nextVersion.id : null;

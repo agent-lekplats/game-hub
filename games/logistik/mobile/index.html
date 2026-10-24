@@ -1,0 +1,2613 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover"
+    />
+    <meta name="theme-color" content="#0d0b08" />
+    <meta name="description" content="Emberhold — A Living Frontier, built for phones: tap, automate, and push the line with one thumb." />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <title>Emberhold — A Living Frontier · Mobile</title>
+    <link
+      rel="icon"
+      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='0' y2='1'%3E%3Cstop offset='0' stop-color='%23ffd86b'/%3E%3Cstop offset='1' stop-color='%23e0641a'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='32' height='32' rx='7' fill='%23120d09'/%3E%3Cpath d='M16 5c3 5-1 6 1 9 1.5 2.2 5 1.6 5 5.5A6.5 6.5 0 0 1 16 27a6.5 6.5 0 0 1-6-7.5C10.5 15 14 14 13 9c2.5 1.5 3 4 3 4s2-4 0-8z' fill='url(%23g)'/%3E%3C/svg%3E"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;900&family=Sora:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --bg: #0d0b08;
+        --bg2: #151009;
+        --panel: rgba(26, 18, 11, 0.82);
+        --panel2: rgba(0, 0, 0, 0.28);
+        --line: rgba(255, 224, 170, 0.1);
+        --line2: rgba(255, 224, 170, 0.18);
+        --ink: #f6ead2;
+        --ink-dim: rgba(246, 234, 210, 0.58);
+        --ink-faint: rgba(246, 234, 210, 0.38);
+        --gold: #f2c14d;
+        --gold-bright: #ffd76b;
+        --ember: #e0641a;
+        --ember-deep: #8c3a10;
+        --accent: #e08a34;
+        --red: #d0523f;
+        --green: #a8ff8a;
+        --wood: #d99a55;
+        --stone: #a9b4c0;
+        --iron: #e08a4c;
+        --crystal: #7fd9ff;
+        --valor: #f2c14d;
+        --hud-h: 96px;
+        --tab-h: 58px;
+        --font-display: "Cinzel", Georgia, serif;
+        --font-body: "Sora", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+      }
+      * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+      html, body {
+        margin: 0; padding: 0; height: 100%;
+        background: var(--bg); color: var(--ink);
+        font-family: var(--font-body);
+        overscroll-behavior: none;
+        touch-action: manipulation;
+        -webkit-user-select: none; user-select: none;
+        -webkit-touch-callout: none;
+        -webkit-text-size-adjust: 100%;
+      }
+      body::before {
+        content: ""; position: fixed; inset: 0; z-index: 0; pointer-events: none;
+        background:
+          radial-gradient(120% 55% at 50% -8%, rgba(224, 100, 26, 0.16), transparent 62%),
+          radial-gradient(90% 40% at 50% 108%, rgba(140, 58, 16, 0.14), transparent 60%);
+      }
+      button { font: inherit; color: inherit; border: 0; background: none; cursor: pointer; touch-action: manipulation; }
+      button:disabled { cursor: default; }
+      .hidden { display: none !important; }
+
+      /* ============ app shell ============ */
+      #app {
+        position: relative; z-index: 1;
+        display: flex; flex-direction: column;
+        height: 100dvh; min-height: 100vh;
+        max-width: 640px; margin: 0 auto;
+      }
+
+      /* ============ HUD ============ */
+      #hud {
+        flex: none;
+        padding: calc(env(safe-area-inset-top, 0px) + 6px) 10px 6px;
+        background: linear-gradient(180deg, rgba(13, 11, 8, 0.96), rgba(13, 11, 8, 0.82));
+        border-bottom: 1px solid var(--line);
+        backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+      }
+      .hud-row1 { display: flex; align-items: center; gap: 8px; }
+      .wordmark { display: flex; flex-direction: column; line-height: 1.05; min-width: 0; }
+      .wordmark b {
+        font-family: var(--font-display); font-weight: 900; font-size: 15px;
+        letter-spacing: 0.24em; color: #f4e2bd;
+      }
+      .wordmark span {
+        font-size: 8px; font-weight: 600; letter-spacing: 0.3em;
+        color: rgba(255, 214, 150, 0.5); text-transform: uppercase; white-space: nowrap;
+      }
+      .conq-chip {
+        margin-left: auto; display: inline-flex; align-items: center; gap: 5px;
+        background: rgba(242, 193, 77, 0.12); border: 1px solid rgba(242, 193, 77, 0.3);
+        color: var(--gold); border-radius: 9px; padding: 5px 9px;
+        font-size: 11px; font-weight: 800; font-variant-numeric: tabular-nums; white-space: nowrap;
+      }
+      .icon-btn {
+        width: 38px; height: 38px; flex: none; border-radius: 11px;
+        border: 1px solid var(--line); background: var(--panel2);
+        display: grid; place-items: center; color: var(--ink-dim);
+        font-size: 15px; font-weight: 700;
+      }
+      .icon-btn:active { transform: scale(0.94); }
+      .icon-btn.on { color: var(--gold-bright); border-color: rgba(242, 193, 77, 0.4); }
+
+      #res-strip {
+        display: flex; gap: 6px; margin-top: 6px;
+        overflow-x: auto; scrollbar-width: none; padding-bottom: 1px;
+      }
+      #res-strip::-webkit-scrollbar { display: none; }
+      .res-chip {
+        flex: none; display: inline-flex; align-items: center; gap: 5px;
+        background: var(--panel2); border: 1px solid var(--line);
+        border-radius: 10px; padding: 4px 8px; min-width: 74px;
+      }
+      .res-chip .dot { width: 9px; height: 9px; border-radius: 3px; flex: none; }
+      .res-chip .amt { font-size: 12.5px; font-weight: 800; font-variant-numeric: tabular-nums; color: #fff7e8; }
+      .res-chip .rate { font-size: 8.5px; font-weight: 600; color: rgba(168, 255, 138, 0.85); font-variant-numeric: tabular-nums; margin-left: auto; }
+      .res-chip.bump { animation: chipBump 0.35s ease; }
+      @keyframes chipBump { 40% { transform: scale(1.07); } }
+
+      .hud-row3 { display: flex; align-items: center; gap: 8px; margin-top: 6px; }
+      .stock-mini {
+        position: relative; flex: 1; height: 6px; border-radius: 99px;
+        background: rgba(0, 0, 0, 0.55); overflow: hidden;
+      }
+      .stock-mini i {
+        position: absolute; inset: 0 auto 0 0; width: 0%;
+        border-radius: 99px;
+        background: linear-gradient(90deg, #ff7a29, #ffd86b);
+        transition: width 0.3s ease;
+      }
+      #stock-text { font-size: 9px; font-weight: 700; color: var(--ink-faint); font-variant-numeric: tabular-nums; white-space: nowrap; }
+      #wave-mini { font-size: 9px; font-weight: 800; color: #ff9d7a; font-variant-numeric: tabular-nums; white-space: nowrap; }
+      #wave-mini.war { color: #ff6a4d; animation: pulse 1s ease infinite; }
+      @keyframes pulse { 50% { opacity: 0.45; } }
+
+      /* ============ main views ============ */
+      #views { flex: 1; min-height: 0; position: relative; }
+      .view {
+        position: absolute; inset: 0;
+        overflow-y: auto; -webkit-overflow-scrolling: touch;
+        overscroll-behavior: contain;
+        padding: 10px 10px 16px;
+        display: none; flex-direction: column; gap: 10px;
+      }
+      .view.active { display: flex; }
+
+      .panel {
+        background: var(--panel); border: 1px solid var(--line);
+        border-radius: 14px; padding: 10px;
+        box-shadow: 0 10px 24px -18px rgba(0, 0, 0, 0.9);
+      }
+      .panel-head {
+        display: flex; align-items: center; gap: 8px;
+        margin-bottom: 8px;
+      }
+      .panel-head h2 {
+        margin: 0; font-family: var(--font-display);
+        font-size: 11.5px; font-weight: 700; letter-spacing: 0.28em;
+        color: rgba(255, 226, 175, 0.85);
+      }
+      .panel-head .sub { font-size: 9.5px; color: var(--ink-faint); font-weight: 600; letter-spacing: 0.06em; }
+      .panel-head .right { margin-left: auto; display: flex; align-items: center; gap: 6px; }
+      .hint { margin: 8px 2px 2px; font-size: 9.5px; line-height: 1.45; color: var(--ink-faint); }
+
+      /* combo */
+      #combo-chip {
+        margin-left: auto; display: inline-flex; align-items: center; gap: 6px;
+        font-size: 10px; font-weight: 900; letter-spacing: 0.08em; color: var(--gold-bright);
+        background: rgba(255, 215, 107, 0.08); border: 1px solid rgba(255, 215, 107, 0.25);
+        padding: 3px 8px; border-radius: 8px; opacity: 0.35; transition: opacity 0.2s;
+        font-variant-numeric: tabular-nums;
+      }
+      #combo-chip.hot { opacity: 1; }
+      #combo-chip .cbar { position: relative; width: 26px; height: 4px; border-radius: 99px; background: rgba(0, 0, 0, 0.5); overflow: hidden; }
+      #combo-chip .cbar i { position: absolute; inset: 0 auto 0 0; width: 0%; background: linear-gradient(90deg, #ff7a29, #ffd86b); }
+
+      /* harvest tiles */
+      .node-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+      .node-tile {
+        position: relative; overflow: hidden;
+        min-height: 104px; border-radius: 13px;
+        border: 1px solid var(--line2);
+        background: linear-gradient(165deg, rgba(46, 32, 18, 0.75), rgba(16, 11, 7, 0.9));
+        display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px;
+        padding: 10px 8px 8px; text-align: center;
+        transition: transform 0.06s ease;
+      }
+      .node-tile:active { transform: scale(0.96); }
+      .node-tile svg { width: 44px; height: 44px; filter: drop-shadow(0 3px 5px rgba(0,0,0,0.55)); }
+      .node-tile.hit { animation: tileHit 0.14s ease; }
+      @keyframes tileHit { 50% { transform: scale(0.93); filter: brightness(1.5); } }
+      .node-tile .n-name { font-size: 9px; font-weight: 800; letter-spacing: 0.22em; color: rgba(255, 226, 175, 0.75); text-transform: uppercase; }
+      .node-tile .n-amt { font-size: 10.5px; font-weight: 700; color: var(--ink-dim); font-variant-numeric: tabular-nums; }
+      .node-tile .n-bar { width: 74%; height: 4px; border-radius: 99px; background: rgba(0,0,0,0.5); overflow: hidden; margin-top: 2px; }
+      .node-tile .n-bar i { display: block; height: 100%; width: 100%; border-radius: 99px; transition: width 0.15s; }
+      .node-tile .n-regrow {
+        position: absolute; inset: 0; display: grid; place-items: center;
+        background: rgba(8, 6, 4, 0.78); backdrop-filter: blur(2px);
+        font-size: 11px; font-weight: 800; color: rgba(255, 226, 175, 0.8);
+        font-variant-numeric: tabular-nums; letter-spacing: 0.05em;
+      }
+      .node-tile.locked { filter: grayscale(0.9) brightness(0.55); }
+      .node-tile.locked .n-regrow { background: rgba(8, 6, 4, 0.6); }
+      .node-tile.just-unlocked { animation: unlockGlow 1.2s ease; }
+      @keyframes unlockGlow {
+        0% { box-shadow: 0 0 0 0 rgba(127, 217, 255, 0.7); }
+        100% { box-shadow: 0 0 0 22px rgba(127, 217, 255, 0); }
+      }
+
+      /* rows (buildings, upgrades, units) */
+      .row {
+        display: flex; align-items: center; gap: 9px;
+        background: var(--panel2); border: 1px solid rgba(255, 224, 170, 0.07);
+        border-radius: 11px; padding: 8px 9px; margin-bottom: 6px;
+      }
+      .row:last-child { margin-bottom: 0; }
+      .row .gicon {
+        width: 34px; height: 34px; flex: none; border-radius: 9px;
+        display: grid; place-items: center; font-size: 17px;
+        background: rgba(255, 214, 150, 0.07); border: 1px solid var(--line);
+      }
+      .row .rmain { flex: 1; min-width: 0; }
+      .row .rname { display: flex; align-items: baseline; gap: 6px; font-size: 12px; font-weight: 800; color: #fff3dd; }
+      .row .rname .lvl { font-size: 9px; font-weight: 700; color: var(--ink-faint); font-variant-numeric: tabular-nums; }
+      .row .rdesc { font-size: 9.5px; color: var(--ink-faint); line-height: 1.35; margin-top: 1px; }
+      .row .rcost { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 4px; }
+      .row .ract { flex: none; display: flex; flex-direction: column; align-items: stretch; gap: 4px; }
+
+      .cost {
+        display: inline-flex; align-items: center; gap: 3px;
+        font-size: 9.5px; font-weight: 800; font-variant-numeric: tabular-nums;
+        background: rgba(0, 0, 0, 0.35); border: 1px solid var(--line);
+        padding: 1.5px 6px; border-radius: 7px; color: var(--c, var(--ink-dim));
+      }
+      .cost.no { color: #ff8f7a; border-color: rgba(208, 82, 63, 0.4); }
+      .pips { display: inline-flex; gap: 2.5px; align-items: center; }
+      .pips i { width: 5px; height: 9px; border-radius: 2px; background: rgba(255, 224, 170, 0.14); }
+      .pips i.on { background: var(--gold); box-shadow: 0 0 5px rgba(242, 193, 77, 0.6); }
+
+      /* buttons */
+      .btn {
+        border-radius: 10px; padding: 9px 13px;
+        font-size: 11.5px; font-weight: 800; letter-spacing: 0.04em;
+        border: 1px solid var(--line2); background: var(--panel2); color: var(--ink);
+        transition: transform 0.06s ease, filter 0.15s;
+        min-height: 38px;
+      }
+      .btn:active:not(:disabled) { transform: scale(0.95); }
+      .btn:disabled { opacity: 0.38; filter: grayscale(0.6); }
+      .btn-ember {
+        background: linear-gradient(180deg, #e0641a, #8c3a10);
+        border-color: rgba(255, 170, 100, 0.4); color: #ffe6c4;
+        box-shadow: 0 4px 14px -6px rgba(224, 100, 26, 0.9), inset 0 1px 0 rgba(255, 220, 170, 0.35);
+        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.45);
+      }
+      .btn-gold {
+        background: linear-gradient(180deg, #d9a13c, #8a5f14);
+        border-color: rgba(255, 226, 150, 0.45); color: #fff3d1;
+        box-shadow: 0 4px 14px -6px rgba(242, 193, 77, 0.8), inset 0 1px 0 rgba(255, 240, 200, 0.4);
+        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+      }
+      .btn-sm { padding: 6px 10px; font-size: 10.5px; min-height: 32px; border-radius: 9px; }
+      .btn-wide { width: 100%; }
+      .btn-danger { border-color: rgba(208, 82, 63, 0.5); color: #ff9d8a; background: rgba(208, 82, 63, 0.12); }
+      .btn-ghost { border-color: var(--line); color: var(--ink-dim); }
+      .toggle {
+        border-radius: 9px; padding: 6px 9px; font-size: 9.5px; font-weight: 900; letter-spacing: 0.1em;
+        border: 1px solid var(--line); background: var(--panel2); color: var(--ink-faint); min-height: 32px;
+      }
+      .toggle.on { color: #ffe08a; border-color: rgba(242, 193, 77, 0.55); background: rgba(242, 193, 77, 0.14); }
+
+      .segmented { display: flex; gap: 4px; }
+      .segmented button {
+        flex: 1; height: 34px; border-radius: 9px;
+        border: 1px solid var(--line); background: var(--panel2);
+        display: grid; place-items: center; gap: 2px;
+        font-size: 9px; font-weight: 800; color: var(--ink-faint); letter-spacing: 0.06em;
+      }
+      .segmented button.on { border-color: rgba(255, 176, 80, 0.6); background: rgba(224, 138, 52, 0.16); color: #ffd9a3; }
+      .segmented .sw { width: 9px; height: 9px; border-radius: 3px; }
+
+      /* crew & stock bars */
+      .bar { position: relative; height: 7px; border-radius: 99px; background: rgba(0, 0, 0, 0.5); overflow: hidden; flex: 1; }
+      .bar i { position: absolute; inset: 0 auto 0 0; width: 0%; border-radius: 99px; transition: width 0.25s ease; }
+      .bar-row { display: flex; align-items: center; gap: 8px; margin: 4px 0 8px; }
+      .bar-row .bar-label { font-size: 9.5px; font-weight: 700; color: var(--ink-faint); font-variant-numeric: tabular-nums; white-space: nowrap; }
+
+      /* ============ FRONT ============ */
+      #canvas-wrap {
+        position: relative; border-radius: 12px; overflow: hidden;
+        border: 1px solid rgba(255, 224, 170, 0.14);
+        background: #100c08;
+      }
+      #canvas-wrap.shake { animation: shake 0.14s ease; }
+      @keyframes shake {
+        25% { transform: translate(2px, -1px); }
+        50% { transform: translate(-2px, 1px); }
+        75% { transform: translate(1px, 1px); }
+      }
+      #battle { display: block; width: 100%; height: 200px; touch-action: pan-y; }
+      @media (min-width: 480px) { #battle { height: 230px; } }
+
+      #btn-smite {
+        position: relative; overflow: hidden; width: 100%; margin-top: 8px;
+        min-height: 56px; border-radius: 13px;
+        background: linear-gradient(180deg, #b34a12, #6e2c08);
+        border: 1px solid rgba(255, 170, 90, 0.45);
+        color: #ffe2b0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1px;
+        box-shadow: 0 6px 18px -8px rgba(224, 100, 26, 0.9), inset 0 1px 0 rgba(255, 210, 150, 0.3);
+      }
+      #btn-smite:active:not(.cooling) { transform: scale(0.97); filter: brightness(1.2); }
+      #btn-smite b { font-family: var(--font-display); font-size: 15px; font-weight: 900; letter-spacing: 0.22em; text-shadow: 0 2px 4px rgba(0,0,0,0.5); }
+      #btn-smite span { font-size: 9.5px; font-weight: 700; color: rgba(255, 226, 176, 0.75); font-variant-numeric: tabular-nums; }
+      #btn-smite .cdfill {
+        position: absolute; left: 0; bottom: 0; height: 3px; width: 0%;
+        background: linear-gradient(90deg, #ff7a29, #ffd86b);
+      }
+      #btn-smite.cooling { filter: saturate(0.5) brightness(0.75); }
+      #btn-smite.armed { background: linear-gradient(180deg, #d9822b, #8c3a10); border-color: rgba(255, 215, 107, 0.7); }
+
+      .wave-card { display: flex; flex-direction: column; gap: 6px; }
+      .wave-card .wrow { display: flex; align-items: center; gap: 8px; }
+      .foe-chips { display: flex; flex-wrap: wrap; gap: 4px; }
+      .foe-chip {
+        display: inline-flex; align-items: center; gap: 4px;
+        background: rgba(208, 82, 63, 0.12); border: 1px solid rgba(208, 82, 63, 0.35);
+        color: #ffb9a5; border-radius: 7px; padding: 2px 7px;
+        font-size: 9.5px; font-weight: 800;
+      }
+      .war-note {
+        border-radius: 10px; border: 1px solid rgba(255, 120, 90, 0.22);
+        background: rgba(80, 20, 12, 0.28); color: rgba(255, 190, 165, 0.85);
+        padding: 9px 10px; font-size: 10.5px; line-height: 1.5;
+      }
+
+      .queue-pips { display: flex; gap: 3px; align-items: center; margin-top: 4px; }
+      .queue-pips .qp {
+        position: relative; width: 16px; height: 6px; border-radius: 3px;
+        background: rgba(0, 0, 0, 0.5); border: 1px solid var(--line); overflow: hidden;
+      }
+      .queue-pips .qp i { position: absolute; inset: 0 auto 0 0; background: linear-gradient(90deg, #ff7a29, #ffd86b); width: 0%; }
+      .queue-pips .qcancel { font-size: 8.5px; font-weight: 800; color: #ff9d8a; padding: 2px 5px; border-radius: 6px; border: 1px solid rgba(208,82,63,0.4); }
+
+      /* ============ REALM ============ */
+      .quest-row { display: flex; align-items: center; gap: 9px; padding: 7px 2px; border-bottom: 1px solid rgba(255, 224, 170, 0.06); }
+      .quest-row:last-child { border-bottom: 0; }
+      .quest-row .qcheck {
+        width: 22px; height: 22px; flex: none; border-radius: 7px; display: grid; place-items: center;
+        border: 1px solid var(--line); background: var(--panel2); font-size: 11px; color: var(--ink-faint);
+      }
+      .quest-row.done .qcheck { background: rgba(168, 255, 138, 0.12); border-color: rgba(168, 255, 138, 0.45); color: var(--green); }
+      .quest-row .qmain { flex: 1; min-width: 0; }
+      .quest-row .qname { font-size: 11.5px; font-weight: 800; color: #fff3dd; }
+      .quest-row.done .qname { color: rgba(255, 243, 221, 0.55); }
+      .quest-row .qdesc { font-size: 9px; color: var(--ink-faint); margin-top: 1px; }
+      .quest-row .qprog { display: flex; align-items: center; gap: 6px; margin-top: 4px; }
+      .quest-row .qprog .bar { height: 5px; }
+      .quest-row .qprog span { font-size: 8.5px; font-weight: 700; color: var(--ink-faint); font-variant-numeric: tabular-nums; }
+      .quest-row .qreward { flex: none; display: flex; flex-direction: column; gap: 3px; align-items: flex-end; }
+
+      .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+      .stat {
+        background: var(--panel2); border: 1px solid rgba(255, 224, 170, 0.07);
+        border-radius: 10px; padding: 8px 10px;
+      }
+      .stat b { display: block; font-size: 15px; font-weight: 800; color: var(--gold); font-variant-numeric: tabular-nums; }
+      .stat span { font-size: 8.5px; font-weight: 700; letter-spacing: 0.14em; color: var(--ink-faint); text-transform: uppercase; }
+
+      .set-row { display: flex; align-items: center; gap: 8px; padding: 6px 0; }
+      .set-row .slabel { flex: 1; font-size: 11px; font-weight: 700; color: var(--ink-dim); }
+      .set-row a { color: var(--gold); text-decoration: none; font-size: 11px; font-weight: 700; }
+
+      /* ============ tab bar ============ */
+      #tabbar {
+        flex: none; display: flex; gap: 6px;
+        padding: 7px 10px calc(env(safe-area-inset-bottom, 0px) + 7px);
+        background: linear-gradient(0deg, rgba(13, 11, 8, 0.98), rgba(13, 11, 8, 0.88));
+        border-top: 1px solid var(--line);
+        backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+      }
+      .tab {
+        position: relative; flex: 1; min-height: 46px; border-radius: 12px;
+        border: 1px solid transparent;
+        display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px;
+        color: var(--ink-faint); font-size: 8.5px; font-weight: 800; letter-spacing: 0.18em;
+      }
+      .tab svg { width: 19px; height: 19px; }
+      .tab.active {
+        color: #ffd9a3; border-color: rgba(255, 176, 80, 0.35);
+        background: linear-gradient(180deg, rgba(224, 138, 52, 0.2), rgba(224, 138, 52, 0.06));
+      }
+      .tab .badge {
+        position: absolute; top: 5px; right: 12px; width: 8px; height: 8px; border-radius: 99px;
+        background: #ff5a3c; box-shadow: 0 0 8px rgba(255, 90, 60, 0.9);
+        animation: pulse 0.9s ease infinite;
+      }
+
+      /* ============ toasts & floaters ============ */
+      #toasts {
+        position: fixed; z-index: 60; left: 50%; transform: translateX(-50%);
+        top: calc(env(safe-area-inset-top, 0px) + 104px);
+        width: min(92vw, 420px); display: flex; flex-direction: column; gap: 6px;
+        pointer-events: none;
+      }
+      .toast {
+        pointer-events: auto;
+        display: flex; gap: 9px; align-items: center;
+        background: rgba(20, 14, 9, 0.94); border: 1px solid var(--line2);
+        border-left: 3px solid var(--accent);
+        border-radius: 12px; padding: 9px 12px;
+        box-shadow: 0 14px 30px -14px rgba(0, 0, 0, 0.95);
+        animation: toastIn 0.28s cubic-bezier(0.22, 0.61, 0.36, 1);
+        backdrop-filter: blur(6px);
+      }
+      .toast.out { animation: toastOut 0.3s ease forwards; }
+      .toast.war { border-left-color: #ff5a3c; }
+      .toast.quest { border-left-color: var(--gold); }
+      .toast.bad { border-left-color: var(--red); }
+      .toast .tico { font-size: 17px; flex: none; }
+      .toast b { display: block; font-size: 11.5px; font-weight: 800; color: #fff3dd; }
+      .toast span { display: block; font-size: 9.5px; color: var(--ink-dim); margin-top: 1px; line-height: 1.4; }
+      @keyframes toastIn { from { transform: translateY(-12px); opacity: 0; } }
+      @keyframes toastOut { to { transform: translateY(-8px); opacity: 0; } }
+
+      #floaters { position: fixed; inset: 0; z-index: 70; pointer-events: none; overflow: hidden; }
+      .floater {
+        position: absolute; transform: translate(-50%, -50%);
+        font-size: 14px; font-weight: 900; font-variant-numeric: tabular-nums;
+        color: #ffe9c9; text-shadow: 0 2px 6px rgba(0, 0, 0, 0.9);
+        animation: floatUp 0.85s cubic-bezier(0.2, 0.7, 0.3, 1) forwards;
+        white-space: nowrap;
+      }
+      .floater.crit { color: var(--gold-bright); font-size: 18px; }
+      .floater.fell { color: var(--green); font-size: 15px; letter-spacing: 0.1em; }
+      @keyframes floatUp {
+        from { opacity: 1; margin-top: 0; }
+        to { opacity: 0; margin-top: -52px; }
+      }
+
+      /* ============ modals & overlays ============ */
+      .modal-veil {
+        position: fixed; inset: 0; z-index: 95;
+        background: rgba(6, 4, 3, 0.82); backdrop-filter: blur(7px); -webkit-backdrop-filter: blur(7px);
+        display: grid; place-items: center; padding: 20px;
+        animation: fadeIn 0.25s ease;
+      }
+      @keyframes fadeIn { from { opacity: 0; } }
+      .modal {
+        width: min(94vw, 400px); max-height: 86dvh; overflow-y: auto;
+        background: linear-gradient(170deg, #241a10, #14100a);
+        border: 1px solid rgba(255, 214, 150, 0.22); border-radius: 18px;
+        padding: 20px 18px; text-align: center;
+        box-shadow: 0 30px 70px -20px rgba(0, 0, 0, 0.95);
+        animation: modalIn 0.3s cubic-bezier(0.22, 0.61, 0.36, 1);
+      }
+      @keyframes modalIn { from { transform: translateY(16px) scale(0.97); opacity: 0; } }
+      .modal .mico {
+        width: 46px; height: 46px; margin: 0 auto 10px; border-radius: 13px;
+        background: linear-gradient(180deg, #e0641a, #8c3a10);
+        display: grid; place-items: center; font-size: 22px;
+        box-shadow: 0 8px 20px -8px rgba(224, 100, 26, 0.9);
+      }
+      .modal h3 {
+        margin: 0; font-family: var(--font-display);
+        font-size: 17px; font-weight: 900; letter-spacing: 0.12em; color: #fff3dd;
+      }
+      .modal p { margin: 8px 0 0; font-size: 11.5px; color: var(--ink-dim); line-height: 1.55; }
+      .modal .gains { margin: 14px 0 4px; background: rgba(0,0,0,0.3); border-radius: 12px; padding: 10px 12px; text-align: left; }
+      .modal .gains .grow { display: flex; align-items: center; justify-content: space-between; padding: 3px 0; font-size: 12px; font-weight: 800; font-variant-numeric: tabular-nums; }
+      .modal .mbtns { display: flex; flex-direction: column; gap: 8px; margin-top: 16px; }
+
+      #pause-overlay {
+        position: fixed; inset: 0; z-index: 75;
+        background: rgba(6, 4, 3, 0.7); backdrop-filter: blur(4px);
+        display: grid; place-items: center; text-align: center;
+      }
+      #pause-overlay b { font-family: var(--font-display); font-size: 26px; letter-spacing: 0.4em; color: #f4e2bd; display: block; }
+      #pause-overlay span { font-size: 11px; color: var(--ink-dim); display: block; margin-top: 8px; }
+
+      /* ============ title screen ============ */
+      #title-screen {
+        position: fixed; inset: 0; z-index: 90;
+        background:
+          radial-gradient(110% 60% at 50% 0%, rgba(224, 100, 26, 0.22), transparent 58%),
+          radial-gradient(80% 45% at 50% 105%, rgba(140, 58, 16, 0.25), transparent 60%),
+          linear-gradient(180deg, #100c07, #0b0805 70%);
+        display: flex; flex-direction: column; align-items: center; justify-content: center;
+        padding: calc(env(safe-area-inset-top, 0px) + 24px) 24px calc(env(safe-area-inset-bottom, 0px) + 24px);
+        text-align: center; gap: 0;
+      }
+      #title-screen.out { animation: titleOut 0.45s ease forwards; }
+      @keyframes titleOut { to { opacity: 0; transform: scale(1.04); } }
+      .t-ember { font-size: 40px; margin-bottom: 8px; filter: drop-shadow(0 0 18px rgba(224, 100, 26, 0.7)); animation: emberFloat 3.4s ease-in-out infinite; }
+      @keyframes emberFloat { 50% { transform: translateY(-5px); } }
+      .t-kicker { font-size: 9.5px; font-weight: 700; letter-spacing: 0.42em; color: rgba(255, 214, 150, 0.55); text-transform: uppercase; }
+      .t-title {
+        font-family: var(--font-display); font-weight: 900;
+        font-size: clamp(30px, 9.5vw, 44px); letter-spacing: 0.14em;
+        color: #f7e7c3; margin: 8px 0 2px;
+        text-shadow: 0 0 34px rgba(224, 100, 26, 0.45), 0 3px 8px rgba(0, 0, 0, 0.8);
+      }
+      .t-sub { font-family: var(--font-display); font-size: 11px; font-weight: 700; letter-spacing: 0.5em; color: rgba(242, 193, 77, 0.75); }
+      .t-badge {
+        margin-top: 14px; display: inline-flex; align-items: center; gap: 6px;
+        font-size: 9px; font-weight: 900; letter-spacing: 0.3em; color: #ffd9a3;
+        border: 1px solid rgba(255, 176, 80, 0.4); background: rgba(224, 100, 26, 0.14);
+        border-radius: 99px; padding: 5px 12px;
+      }
+      .t-feats { margin: 26px 0 0; display: flex; flex-direction: column; gap: 10px; width: min(92vw, 380px); }
+      .t-feat { display: flex; gap: 10px; text-align: left; background: rgba(255, 240, 214, 0.035); border: 1px solid var(--line); border-radius: 12px; padding: 9px 12px; }
+      .t-feat .fi { font-size: 16px; flex: none; margin-top: 1px; }
+      .t-feat b { display: block; font-size: 10px; font-weight: 900; letter-spacing: 0.2em; color: rgba(255, 226, 175, 0.9); }
+      .t-feat span { display: block; font-size: 10px; color: var(--ink-faint); line-height: 1.45; margin-top: 2px; }
+      .t-btns { margin-top: 26px; width: min(92vw, 380px); display: flex; flex-direction: column; gap: 9px; }
+      .t-btns .btn { min-height: 50px; font-size: 13px; letter-spacing: 0.12em; font-family: var(--font-display); font-weight: 900; }
+      .t-foot { margin-top: 18px; font-size: 8.5px; letter-spacing: 0.26em; color: rgba(246, 234, 210, 0.3); font-weight: 600; }
+      .t-links { margin-top: 10px; display: flex; gap: 14px; font-size: 10px; }
+      .t-links a { color: rgba(242, 193, 77, 0.75); text-decoration: none; font-weight: 700; }
+    </style>
+  </head>
+  <body>
+    <!-- ============ TITLE SCREEN ============ -->
+    <div id="title-screen">
+      <div class="t-ember" aria-hidden="true">🔥</div>
+      <div class="t-kicker">From a spark, a realm</div>
+      <h1 class="t-title">EMBERHOLD</h1>
+      <div class="t-sub">A LIVING FRONTIER</div>
+      <div class="t-badge">📱 MOBILE UI</div>
+      <div class="t-feats">
+        <div class="t-feat"><span class="fi">🏕️</span><div><b>A LIVING BASE</b><span>Workers, stockpiles, smoke and growth you can feel — one thumb is all it takes.</span></div></div>
+        <div class="t-feat"><span class="fi">⚙️</span><div><b>AUTOMATION</b><span>From your own two hands to a self-running machine.</span></div></div>
+        <div class="t-feat"><span class="fi">⚔️</span><div><b>THE FRONT</b><span>An autobattler war that feeds — and is fed by — your economy.</span></div></div>
+      </div>
+      <div class="t-btns" id="title-btns"></div>
+      <div class="t-foot">THE WORLD SAVES ITSELF EVERY FEW SECONDS</div>
+      <div class="t-links">
+        <a href="../latest/?ui=desktop" id="link-desktop">Desktop build</a>
+        <a href="../../../index.html?game=logistik">Game hub</a>
+      </div>
+    </div>
+
+    <!-- ============ APP ============ -->
+    <div id="app" class="hidden">
+      <header id="hud">
+        <div class="hud-row1">
+          <div class="wordmark"><b>EMBERHOLD</b><span>a living frontier</span></div>
+          <div class="conq-chip" id="conq-chip">⚑ Conquest 0</div>
+          <button class="icon-btn" id="btn-pause" aria-label="Pause">❚❚</button>
+          <button class="icon-btn" id="btn-mute" aria-label="Mute">♪</button>
+        </div>
+        <div id="res-strip"></div>
+        <div class="hud-row3">
+          <div class="stock-mini"><i id="stock-fill"></i></div>
+          <span id="stock-text">0/300</span>
+          <span id="wave-mini"></span>
+        </div>
+      </header>
+
+      <main id="views">
+        <!-- ============ DOMAIN ============ -->
+        <section class="view active" id="view-domain" aria-label="Domain">
+          <div class="panel">
+            <div class="panel-head">
+              <h2>HARVEST</h2>
+              <div id="combo-chip">COMBO ×<b id="combo-n">0</b><span class="cbar"><i id="combo-fill"></i></span></div>
+            </div>
+            <div class="node-grid" id="node-grid"></div>
+            <p class="hint">Tap the land — every 5th hit in a combo is a guaranteed crit. Workers harvest the wilds on their own.</p>
+          </div>
+
+          <div class="panel">
+            <div class="panel-head">
+              <h2>CREW</h2>
+              <div class="right"><span class="sub" id="crew-count">0 / 0 beds</span></div>
+            </div>
+            <div class="bar-row">
+              <div class="bar"><i id="crew-fill" style="background: linear-gradient(90deg,#c96f4a,#ffd86b)"></i></div>
+            </div>
+            <button class="btn btn-ember btn-wide" id="btn-hire">HIRE A WORKER</button>
+            <p class="hint" id="crew-note">Build a Bunkhouse for beds — more hands, more everything.</p>
+            <div class="panel-head" style="margin: 10px 0 6px">
+              <span class="sub" style="letter-spacing:0.2em; font-weight:800; color: rgba(255,226,175,0.6)">HARVEST FOCUS</span>
+            </div>
+            <div class="segmented" id="focus-seg"></div>
+          </div>
+
+          <div class="panel">
+            <div class="panel-head"><h2>STRUCTURES</h2></div>
+            <div class="row">
+              <div class="gicon">📦</div>
+              <div class="rmain">
+                <div class="rname">Stockpile <span class="lvl" id="stock-lvl">Lv 1</span> <span class="pips" id="stock-pips"></span></div>
+                <div class="bar-row" style="margin: 5px 0 0"><div class="bar"><i id="stock-bar" style="background: linear-gradient(90deg,#ff7a29,#ffd86b)"></i></div><span class="bar-label" id="stock-label">0 / 300</span></div>
+              </div>
+              <div class="ract"><button class="btn btn-sm" id="btn-stock">EXPAND</button></div>
+            </div>
+            <div id="struct-rows"></div>
+          </div>
+
+          <div class="panel hidden" id="panel-workshop">
+            <div class="panel-head"><h2>WORKSHOP</h2><div class="right"><span class="sub">ECONOMY UPGRADES</span></div></div>
+            <div id="upg-econ"></div>
+          </div>
+
+          <div class="panel hidden" id="panel-forge">
+            <div class="panel-head"><h2>FORGE</h2><div class="right"><span class="sub">WAR &amp; VALOR</span></div></div>
+            <div id="upg-war"></div>
+            <div class="panel-head" style="margin: 12px 0 6px"><span class="sub" style="letter-spacing:0.24em; font-weight:800; color: rgba(255,226,175,0.6)">VALOR ARTS</span></div>
+            <div id="tech-rows"></div>
+          </div>
+        </section>
+
+        <!-- ============ FRONT ============ -->
+        <section class="view" id="view-front" aria-label="The Front">
+          <div class="panel">
+            <div class="panel-head">
+              <h2>THE FRONT</h2>
+              <div class="right">
+                <span class="conq-chip" id="front-conq" style="margin:0">⚑ 0</span>
+              </div>
+            </div>
+            <div id="canvas-wrap"><canvas id="battle"></canvas></div>
+            <div class="war-note" id="war-note" style="margin-top:8px">The Horde gathers in the east. Raise a <b>Barracks</b> to answer — win waves to push the line and claim spoiled land.</div>
+            <button id="btn-smite"><b>BATTLE CALL</b><span id="smite-label">Commander Bolt — 16 dmg</span><i class="cdfill" id="smite-cd"></i></button>
+            <p class="hint">Tap foes on the field (or the call) to smite. Combos charge every strike.</p>
+          </div>
+
+          <div class="panel" id="panel-wave">
+            <div class="panel-head"><h2>NEXT WAVE</h2><div class="right"><span class="sub" id="wave-timer-label">—</span></div></div>
+            <div class="wave-card">
+              <div class="bar-row" style="margin:0"><div class="bar"><i id="wave-fill" style="background: linear-gradient(90deg,#a33322,#ff6a4d)"></i></div></div>
+              <div class="foe-chips" id="wave-comp"></div>
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="panel-head">
+              <h2>ARMY</h2>
+              <div class="right"><span class="sub" id="army-count">0 / 8</span></div>
+            </div>
+            <div class="bar-row" style="margin: 0 0 8px"><div class="bar"><i id="army-fill" style="background: linear-gradient(90deg,#3f6fb8,#7ec3ff)"></i></div></div>
+            <div id="army-rows"></div>
+          </div>
+        </section>
+
+        <!-- ============ REALM ============ -->
+        <section class="view" id="view-realm" aria-label="Realm">
+          <div class="panel">
+            <div class="panel-head"><h2>RECORD OF THE REALM</h2><div class="right"><span class="sub" id="quest-count">0 / 10</span></div></div>
+            <div id="quest-rows"></div>
+          </div>
+          <div class="panel">
+            <div class="panel-head"><h2>CHRONICLE</h2></div>
+            <div class="stats-grid">
+              <div class="stat"><b id="st-wood">0</b><span>Wood gathered</span></div>
+              <div class="stat"><b id="st-kills">0</b><span>Foes felled</span></div>
+              <div class="stat"><b id="st-waves">0</b><span>Waves repelled</span></div>
+              <div class="stat"><b id="st-combo">0</b><span>Best combo</span></div>
+              <div class="stat"><b id="st-earned">0</b><span>Total earned</span></div>
+              <div class="stat"><b id="st-time">0s</b><span>Reign length</span></div>
+            </div>
+          </div>
+          <div class="panel">
+            <div class="panel-head"><h2>REALM SETTINGS</h2></div>
+            <div class="set-row"><span class="slabel">Sound</span><button class="toggle" id="set-mute">ON</button></div>
+            <div class="set-row"><span class="slabel">Desktop build (full map)</span><a href="../latest/?ui=desktop">Open →</a></div>
+            <div class="set-row"><span class="slabel">Game hub</span><a href="../../../index.html?game=logistik">Open →</a></div>
+            <div class="set-row"><button class="btn btn-danger btn-wide" id="btn-burn">🔥 BURN IT ALL</button></div>
+            <p class="hint">Your reign shares one save with the desktop build — progress carries over both ways.</p>
+          </div>
+        </section>
+      </main>
+
+      <nav id="tabbar" aria-label="Views">
+        <button class="tab active" data-view="domain" aria-label="Domain">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/><path d="M9 21v-6h6v6"/></svg>
+          DOMAIN
+        </button>
+        <button class="tab" data-view="front" aria-label="The Front">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 17.5 3 6V3h3l11.5 11.5"/><path d="m13 19 6-6"/><path d="m16 16 4 4"/><path d="M19 21l2-2"/><path d="M5 5 3 3"/></svg>
+          THE FRONT
+          <span class="badge hidden" id="war-badge"></span>
+        </button>
+        <button class="tab" data-view="realm" aria-label="Realm">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 7 4 4 5-7 5 7 4-4v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+          REALM
+        </button>
+      </nav>
+    </div>
+
+    <div id="toasts" aria-live="polite"></div>
+    <div id="floaters"></div>
+    <div id="modal-root"></div>
+
+    <noscript>
+      <p style="max-width: 420px; margin: 40px auto; padding: 0 20px; font: 14px system-ui; color: #f6ead2; text-align: center">
+        JavaScript is required for Emberhold.
+        <a style="color:#f2c14d" href="../latest/?ui=desktop">Open the desktop build</a> or
+        <a style="color:#f2c14d" href="../../../index.html">the game hub</a>.
+      </p>
+    </noscript>
+
+    <script>
+    (function () {
+      "use strict";
+
+      /* =====================================================================
+         Emberhold — A Living Frontier · MOBILE UI build
+         A touch-first re-telling of the same game. Economy, waves, units,
+         upgrades, quests and the save file mirror the desktop build so one
+         reign can move between the two (localStorage key: emberhold_save_v1).
+         ===================================================================== */
+
+      /* ---------------- tiny helpers ---------------- */
+      var $ = function (id) { return document.getElementById(id); };
+      function clamp(v, a, b) { return v < a ? a : v > b ? b : v; }
+      function rnd(a, b) { return a + Math.random() * (b - a); }
+      function fmt(n) {
+        n = Math.floor(n);
+        if (n >= 1000000) return (n / 1000000).toFixed(2) + "M";
+        if (n >= 10000) return (n / 1000).toFixed(1) + "k";
+        return String(n);
+      }
+      function fmtDur(s) {
+        var h = Math.floor(s / 3600), m = Math.floor((s % 3600) / 60);
+        if (h > 0) return h + "h " + m + "m";
+        if (m > 0) return m + "m";
+        return Math.floor(s) + "s";
+      }
+      function el(tag, cls, html) {
+        var e = document.createElement(tag);
+        if (cls) e.className = cls;
+        if (html != null) e.innerHTML = html;
+        return e;
+      }
+
+      /* ---------------- game data (mirrors the desktop bundle) ---------------- */
+      var SAVE_KEY = "emberhold_save_v1";
+      var RES = {
+        wood:    { label: "Wood",    color: "#d99a55" },
+        stone:   { label: "Stone",   color: "#a9b4c0" },
+        iron:    { label: "Iron",    color: "#e08a4c" },
+        crystal: { label: "Crystal", color: "#7fd9ff" },
+        valor:   { label: "Valor",   color: "#f2c14d" }
+      };
+      var RES_KEYS = ["wood", "stone", "iron", "crystal", "valor"];
+
+      var WORKER = {
+        baseCost: { wood: 20, stone: 15 }, costMult: 1.55,
+        carry: 5, speed: 74, harvestTime: 1, maxWorkers: 24, slotsPerBunk: 2
+      };
+      function hireCost(n) {
+        return {
+          wood: Math.round(WORKER.baseCost.wood * Math.pow(WORKER.costMult, n)),
+          stone: Math.round(WORKER.baseCost.stone * Math.pow(WORKER.costMult, n))
+        };
+      }
+
+      var BUILD = {
+        bunkhouse: { name: "Bunkhouse", icon: "🛖", desc: "+2 worker beds. More hands, more everything.", max: 3,
+          cost: function (a) { return { wood: Math.round(40 * Math.pow(1.7, a)), stone: Math.round(26 * Math.pow(1.7, a)) }; } },
+        workshop: { name: "Workshop", icon: "🔨", desc: "Unlocks economy upgrades for your crew.", max: 1,
+          cost: function () { return { wood: 90, stone: 60 }; } },
+        barracks: { name: "Barracks", icon: "⚔️", desc: "Trains soldiers, +6 army size. Wakes the Horde.", max: 3,
+          cost: function (a) { return { wood: Math.round(120 * Math.pow(1.85, a)), stone: Math.round(95 * Math.pow(1.85, a)) }; } },
+        forge: { name: "Forge", icon: "🔥", desc: "Unlocks war upgrades and valor techniques.", max: 1,
+          cost: function () { return { stone: 100, iron: 60 }; } }
+      };
+      var BUILD_ORDER = ["bunkhouse", "workshop", "barracks", "forge"];
+
+      var STOCK = {
+        max: 6,
+        cost: function (lvl) {
+          return { wood: Math.round(45 * Math.pow(lvl, 1.7)), stone: Math.round(32 * Math.pow(lvl, 1.6)) };
+        },
+        cap: function (lvl) { return Math.round(300 * Math.pow(2, lvl - 1)); }
+      };
+
+      var UPG = [
+        { id: "axes",  name: "Sharper Tools",    scope: "econ", max: 5, icon: "🪓", desc: "+1 click power · +20% harvest speed",
+          cost: function (a) { return { wood: Math.round(35 * Math.pow(2.1, a)), stone: Math.round(25 * Math.pow(2.1, a)) }; } },
+        { id: "packs", name: "Big Baskets",      scope: "econ", max: 4, icon: "🧺", desc: "+4 carry per worker",
+          cost: function (a) { return { wood: Math.round(45 * Math.pow(2.2, a)) }; } },
+        { id: "boots", name: "Trail Boots",      scope: "econ", max: 4, icon: "🥾", desc: "+15% worker move speed",
+          cost: function (a) { return { wood: Math.round(30 * Math.pow(2.1, a)), stone: Math.round(20 * Math.pow(2.1, a)) }; } },
+        { id: "blades", name: "Tempered Blades", scope: "war", max: 5, icon: "🗡️", desc: "+18% army damage",
+          cost: function (a) { return { iron: Math.round(25 * Math.pow(2.2, a)), valor: Math.round(8 * Math.pow(2, a)) }; } },
+        { id: "plate", name: "Reinforced Plate", scope: "war", max: 5, icon: "🛡️", desc: "+22% army health",
+          cost: function (a) { return { iron: Math.round(20 * Math.pow(2.2, a)), valor: Math.round(8 * Math.pow(2, a)) }; } },
+        { id: "drums", name: "War Drums",        scope: "war", max: 3, icon: "🥁", desc: "+12% train & rally speed",
+          cost: function (a) { return { wood: Math.round(40 * Math.pow(2.4, a)), valor: Math.round(10 * Math.pow(2.1, a)) }; } }
+      ];
+
+      var TECH = [
+        { id: "strike", name: "Commander Strike", max: 4, icon: "⚡",
+          desc: function (a) { return "Thunderous AoE smite (" + STRIKE_DMG[Math.min(a + 1, 4)] + " dmg + shockwave)"; },
+          cost: function (a) { return { valor: Math.round(35 * Math.pow(2, a)) }; } },
+        { id: "archery", name: "Archery", max: 1, icon: "🏹",
+          desc: function () { return "Unlocks Archers — long range volleys"; },
+          cost: function () { return { valor: 30 }; } },
+        { id: "heavy", name: "Heavy Platecraft", max: 1, icon: "🛡️",
+          desc: function () { return "Unlocks Guardians — a living wall"; },
+          cost: function () { return { valor: 70 }; } },
+        { id: "tactics", name: "Grand Tactics", max: 2, icon: "🎖️",
+          desc: function () { return "+6 army size"; },
+          cost: function (a) { return { valor: Math.round(90 * Math.pow(2.4, a)) }; } },
+        { id: "golem", name: "Golemancy", max: 1, icon: "🗿",
+          desc: function () { return "Unlocks War Golems — slow, unstoppable"; },
+          cost: function () { return { valor: 160 }; } }
+      ];
+      var STRIKE_DMG = [16, 45, 90, 160, 260];
+
+      var UNIT = {
+        militia:  { name: "Militia",  icon: "🗡️", desc: "Cheap steel, brave hearts.",
+          cost: { wood: 12, stone: 8 }, hp: 45, dmg: 7, rng: 20, spd: 58, cd: 1, train: 3.5, color: "#7fa7d9" },
+        archer:   { name: "Archer",   icon: "🏹", desc: "Death from four fields away.",
+          cost: { wood: 16, iron: 14 }, hp: 30, dmg: 11, rng: 165, spd: 54, cd: 1.5, train: 4.5, tech: "archery", ranged: true, color: "#86c06c" },
+        guardian: { name: "Guardian", icon: "🛡️", desc: "The line does not break.",
+          cost: { stone: 26, iron: 18 }, hp: 190, dmg: 13, rng: 22, spd: 42, cd: 1.2, train: 6.5, tech: "heavy", color: "#d8c26a" },
+        golem:    { name: "War Golem", icon: "🗿", desc: "A landslide with a grudge.",
+          cost: { iron: 45, crystal: 12 }, hp: 560, dmg: 36, rng: 30, spd: 30, cd: 1.8, train: 10, tech: "golem", aoe: 75, color: "#6fd3e8" }
+      };
+      var UNIT_ORDER = ["militia", "archer", "guardian", "golem"];
+      function armyCap(barracks, tactics) { return 8 + barracks * 6 + tactics * 6; }
+
+      var FOE = {
+        raider:  { name: "Raider",  hp: 34,  dmg: 6,  rng: 18,  spd: 48, cd: 1.1, valor: 1,  scale: 1,    color: "#c96f5a" },
+        brute:   { name: "Brute",   hp: 135, dmg: 14, rng: 22,  spd: 33, cd: 1.4, valor: 3,  scale: 1.45, color: "#a05240" },
+        shaman:  { name: "Shaman",  hp: 55,  dmg: 12, rng: 135, spd: 38, cd: 1.6, valor: 5,  scale: 1.05, color: "#9a6fc9", ranged: true },
+        warlord: { name: "Warlord", hp: 750, dmg: 32, rng: 26,  spd: 30, cd: 1.5, valor: 25, scale: 2.1,  color: "#d94f3f" }
+      };
+      function waveComp(w) {
+        var out = [];
+        var raiders = Math.min(30, 2 + Math.ceil(w * 0.9));
+        var brutes = Math.min(18, Math.max(0, Math.floor((w - 1) * 0.6)));
+        var shamans = Math.min(12, Math.max(0, Math.floor((w - 3) * 0.5)));
+        out.push({ type: "raider", count: raiders });
+        if (brutes > 0) out.push({ type: "brute", count: brutes });
+        if (shamans > 0) out.push({ type: "shaman", count: shamans });
+        if (w % 5 === 0) out.push({ type: "warlord", count: 1 });
+        return out;
+      }
+      var hpScale = function (w) { return 1 + 0.07 * (w - 1); };
+      var dmgScale = function (w) { return 1 + 0.045 * (w - 1); };
+      var WAVE_GAP = 28, FIRST_WAVE = 40;
+      function conquestReward(c) {
+        var r = { wood: 15 + 8 * c, stone: 10 + 6 * c, iron: 8 + 4 * c, valor: 5 + Math.ceil(c / 2) };
+        if (c >= 4) r.crystal = 2 + Math.round(c / 2);
+        return r;
+      }
+
+      var QUESTS = [
+        { id: "q_chop", name: "First Splinters", desc: "Gather 30 wood (tap the trees)", target: 30, reward: { wood: 20 }, prog: function (s) { return s.stats.gatheredWood; } },
+        { id: "q_worker", name: "Helping Hands", desc: "Hire your first worker", target: 1, reward: { wood: 15, stone: 10 }, prog: function (s) { return s.workers.length; } },
+        { id: "q_stock", name: "Stock Up", desc: "Hold 120 resources at once", target: 120, reward: { iron: 15 }, prog: function (s) { return s.res.wood + s.res.stone + s.res.iron + s.res.crystal; } },
+        { id: "q_barracks", name: "Raise the Colors", desc: "Build a Barracks", target: 1, reward: { iron: 20, valor: 10 }, prog: function (s) { return s.buildings.barracks; } },
+        { id: "q_blood", name: "First Blood", desc: "Repel a wave of the Horde", target: 1, reward: { valor: 25 }, prog: function (s) { return s.stats.wavesWon; } },
+        { id: "q_line", name: "The Line Moves", desc: "Reach Conquest 3", target: 3, reward: { crystal: 12 }, prog: function (s) { return s.conquest; } },
+        { id: "q_econ", name: "A Working Machine", desc: "Employ 6 workers", target: 6, reward: { wood: 45, stone: 40 }, prog: function (s) { return s.workers.length; } },
+        { id: "q_army", name: "Steel Company", desc: "Field 10 soldiers at once", target: 10, reward: { iron: 25, crystal: 8 }, prog: function (s) { return s.units.length; } },
+        { id: "q_push", name: "No Ground Given", desc: "Reach Conquest 6", target: 6, reward: { valor: 60 }, prog: function (s) { return s.conquest; } },
+        { id: "q_legend", name: "The Ember Frontier", desc: "Reach Conquest 10", target: 10, reward: { valor: 120, crystal: 60 }, prog: function (s) { return s.conquest; } }
+      ];
+
+      /* harvest plots — the mobile domain condenses the wilds into four
+         tap-plots. Crystal ruins surface once the line has moved (conquest 2). */
+      var PLOTS = [
+        { key: "tree",  res: "wood",    name: "Trees",   amount: 25, regrow: 40, unlock: 0 },
+        { key: "rock",  res: "stone",   name: "Rocks",   amount: 22, regrow: 55, unlock: 0 },
+        { key: "iron",  res: "iron",    name: "Iron seam", amount: 15, regrow: 70, unlock: 0 },
+        { key: "ruin",  res: "crystal", name: "Ruins",   amount: 12, regrow: 90, unlock: 2 }
+      ];
+      var PLOT_ART = {
+        tree: '<svg viewBox="0 0 48 48"><path d="M24 4 12 22h6L9 34h30L30 22h6z" fill="#4f7d45"/><path d="M24 4 12 22h6L9 34h15z" fill="#67995a"/><rect x="21" y="34" width="6" height="9" rx="2" fill="#6b4423"/></svg>',
+        rock: '<svg viewBox="0 0 48 48"><path d="M8 36 16 16l10-6 12 10 2 16z" fill="#8b95a2"/><path d="M8 36 16 16l10-6v26z" fill="#a9b4c0"/><path d="M26 10l12 10 2 16H26z" fill="#6d7784"/></svg>',
+        iron: '<svg viewBox="0 0 48 48"><path d="M8 36 16 16l10-6 12 10 2 16z" fill="#7c6a58"/><path d="M8 36 16 16l10-6v26z" fill="#96816b"/><circle cx="20" cy="26" r="3" fill="#e08a4c"/><circle cx="30" cy="22" r="2.4" fill="#e08a4c"/><circle cx="28" cy="31" r="2" fill="#c96f3a"/></svg>',
+        ruin: '<svg viewBox="0 0 48 48"><path d="M8 40V22l6-4v22zM20 40V14l8-6 8 6v26h-6V20l-2-2-2 2v20z" fill="#5c6470"/><path d="M34 40V18l6 4v18z" fill="#49505b"/><path d="m24 24 3 6-3 10-3-10z" fill="#7fd9ff"/><path d="m24 24 3 6-3 3z" fill="#bdeaff"/></svg>'
+      };
+
+      /* ---------------- audio ---------------- */
+      var SFX = (function () {
+        var ctx = null, muted = false;
+        function ensure() {
+          if (ctx || typeof window === "undefined") return ctx;
+          var AC = window.AudioContext || window.webkitAudioContext;
+          if (!AC) return null;
+          try { ctx = new AC(); } catch (e) { ctx = null; }
+          return ctx;
+        }
+        function tone(o) {
+          if (muted) return;
+          var c = ensure();
+          if (!c) return;
+          try {
+            if (c.state === "suspended" && c.resume) c.resume();
+            var t0 = c.currentTime + (o.delay || 0);
+            var osc = c.createOscillator(), g = c.createGain();
+            osc.type = o.type || "sine";
+            osc.frequency.setValueAtTime(o.freq, t0);
+            if (o.freq2) osc.frequency.exponentialRampToValueAtTime(Math.max(30, o.freq2), t0 + o.dur);
+            g.gain.setValueAtTime(o.vol || 0.2, t0);
+            g.gain.exponentialRampToValueAtTime(0.0001, t0 + o.dur);
+            osc.connect(g); g.connect(c.destination);
+            osc.start(t0); osc.stop(t0 + o.dur + 0.02);
+          } catch (e) { /* audio is a garnish, never a crash */ }
+        }
+        return {
+          unlock: function () { ensure(); },
+          setMuted: function (m) { muted = !!m; },
+          isMuted: function () { return muted; },
+          chop:    function () { tone({ freq: 220, freq2: 120, dur: 0.07, vol: 0.16, type: "triangle" }); },
+          crit:    function () { tone({ freq: 520, freq2: 260, dur: 0.1, vol: 0.2, type: "square" }); tone({ freq: 780, dur: 0.12, vol: 0.14, type: "sine", delay: 0.04 }); },
+          coin:    function () { tone({ freq: 880, freq2: 1320, dur: 0.08, vol: 0.1, type: "sine" }); },
+          hire:    function () { tone({ freq: 440, freq2: 660, dur: 0.12, vol: 0.18, type: "triangle" }); tone({ freq: 660, freq2: 880, dur: 0.12, vol: 0.14, type: "triangle", delay: 0.09 }); },
+          build:   function () { tone({ freq: 160, freq2: 90, dur: 0.16, vol: 0.26, type: "sine" }); tone({ freq: 320, freq2: 480, dur: 0.14, vol: 0.14, type: "triangle", delay: 0.05 }); },
+          learn:   function () { tone({ freq: 520, freq2: 780, dur: 0.12, vol: 0.16, type: "sine" }); tone({ freq: 780, freq2: 1040, dur: 0.16, vol: 0.14, type: "sine", delay: 0.1 }); },
+          error:   function () { tone({ freq: 130, freq2: 90, dur: 0.14, vol: 0.18, type: "square" }); },
+          horn:    function () { tone({ freq: 180, freq2: 150, dur: 0.5, vol: 0.24, type: "sawtooth" }); tone({ freq: 240, freq2: 200, dur: 0.5, vol: 0.18, type: "sawtooth", delay: 0.12 }); },
+          smite:   function () { tone({ freq: 700, freq2: 180, dur: 0.12, vol: 0.24, type: "square" }); },
+          bolt:    function () { tone({ freq: 500, freq2: 160, dur: 0.09, vol: 0.18, type: "square" }); },
+          hit:     function () { tone({ freq: 300, freq2: 160, dur: 0.05, vol: 0.1, type: "triangle" }); },
+          death:   function () { tone({ freq: 240, freq2: 70, dur: 0.22, vol: 0.16, type: "sawtooth" }); },
+          victory: function () { [523, 659, 784, 1046].forEach(function (f, i) { tone({ freq: f, dur: 0.16, vol: 0.16, type: "triangle", delay: i * 0.09 }); }); },
+          raid:    function () { tone({ freq: 720, freq2: 500, dur: 0.16, vol: 0.3, type: "square" }); tone({ freq: 720, freq2: 500, dur: 0.16, vol: 0.3, type: "square", delay: 0.22 }); },
+          quest:   function () { [660, 880, 1100].forEach(function (f, i) { tone({ freq: f, dur: 0.14, vol: 0.15, type: "sine", delay: i * 0.08 }); }); },
+          tapui:   function () { tone({ freq: 400, freq2: 520, dur: 0.04, vol: 0.06, type: "sine" }); }
+        };
+      })();
+
+      /* ---------------- state ---------------- */
+      var S = null;          // the live game state
+      var started = false;   // past the title screen
+      var FX = { particles: [], projs: [], floats: [], rings: [] }; // canvas juice
+
+      function newGame(seed) {
+        return {
+          seed: seed >>> 0, time: 0, paused: false, muted: false,
+          res: { wood: 12, stone: 6, iron: 0, crystal: 0, valor: 0 },
+          stockLvl: 1,
+          buildings: { bunkhouse: 0, workshop: 0, barracks: 0, forge: 0 },
+          upg: {}, tech: {}, focus: "auto",
+          workers: [], units: [], enemies: [], pending: [], queue: [],
+          auto: { militia: false, archer: false, guardian: false, golem: false },
+          plots: {},
+          combo: 0, comboTimer: 0, maxCombo: 0, strikeCd: 0,
+          conquest: 0, frontX: 1600,
+          waveTimer: FIRST_WAVE, waveActive: false, waveNum: 0, lineBroken: false, firstWaveShown: false,
+          stats: { gatheredWood: 0, kills: 0, wavesWon: 0, totalEarned: 0, earnedRun: 0 },
+          questsDone: [], deposits: [], rates: { wood: 0, stone: 0, iron: 0, crystal: 0, valor: 0 },
+          fullToastAt: -99
+        };
+      }
+      function initPlots(s) {
+        PLOTS.forEach(function (p) { s.plots[p.key] = { amount: p.amount, regrowT: 0 }; });
+      }
+
+      /* derived numbers — same formulas as the desktop build */
+      function upgL(id) { return S.upg[id] || 0; }
+      function techL(id) { return S.tech[id] || 0; }
+      function clickPower() { return 2 + upgL("axes"); }
+      function carryCap() { return WORKER.carry + 4 * upgL("packs"); }
+      function harvestTime() { return WORKER.harvestTime / (1 + 0.2 * upgL("axes")); }
+      function workerSpeedF() { return 1 + 0.15 * upgL("boots"); }
+      function dmgMult() { return 1 + 0.18 * upgL("blades"); }
+      function hpMult() { return 1 + 0.22 * upgL("plate"); }
+      function trainSpeedF() { return 1 + 0.12 * upgL("drums"); }
+      function capArmy() { return armyCap(S.buildings.barracks, techL("tactics")); }
+      function queueSlots() { return 2 * S.buildings.barracks; }
+      function beds() { return Math.min(S.buildings.bunkhouse * WORKER.slotsPerBunk, WORKER.maxWorkers); }
+      function storageCap() { return STOCK.cap(S.stockLvl); }
+      function plotUnlocked(p) { return S.conquest >= p.unlock; }
+      function autoResList() {
+        var l = ["wood", "stone", "iron"];
+        if (S.conquest >= 2) l.push("crystal");
+        return l;
+      }
+
+      function canPay(cost) {
+        for (var k in cost) if ((S.res[k] || 0) < (cost[k] || 0)) return false;
+        return true;
+      }
+      function pay(cost) {
+        if (!canPay(cost)) return false;
+        for (var k in cost) S.res[k] -= cost[k] || 0;
+        return true;
+      }
+      /* Ol() mirror: valor is uncapped, the rest is capped by the stockpile */
+      function gain(res, amt) {
+        if (amt <= 0) return 0;
+        if (res === "valor") {
+          S.res.valor += amt;
+          S.stats.totalEarned += amt; S.stats.earnedRun += amt;
+          return amt;
+        }
+        var cap = storageCap(), before = S.res[res];
+        S.res[res] = Math.min(cap, before + amt);
+        var applied = S.res[res] - before;
+        if (applied > 0) { S.stats.totalEarned += applied; S.stats.earnedRun += applied; }
+        if (applied < amt && S.time - S.fullToastAt > 8) {
+          S.fullToastAt = S.time;
+          toast("bad", "Stockpile full", "Expand the stockpile to store more.");
+        }
+        return applied;
+      }
+      function addDeposit(res, amt) {
+        if (amt <= 0) return;
+        S.deposits.push({ t: S.time, res: res, amt: amt });
+      }
+      function tickRates() {
+        var win = 8, cut = S.time - win;
+        while (S.deposits.length && S.deposits[0].t < cut) S.deposits.shift();
+        var sums = { wood: 0, stone: 0, iron: 0, crystal: 0, valor: 0 };
+        S.deposits.forEach(function (d) { sums[d.res] += d.amt; });
+        RES_KEYS.forEach(function (k) { S.rates[k] = sums[k] / win; });
+      }
+
+      /* ---------------- save / load (schema-compatible with desktop) ---------------- */
+      function unitCounts() {
+        var u = {};
+        S.units.forEach(function (x) { u[x.type] = (u[x.type] || 0) + 1; });
+        return u;
+      }
+      function serialize() {
+        return JSON.stringify({
+          v: 1, seed: S.seed, time: S.time, res: S.res, stockLvl: S.stockLvl,
+          buildings: S.buildings, upg: S.upg, tech: S.tech, focus: S.focus,
+          workerCount: S.workers.length, unitCounts: unitCounts(),
+          rally: { x: Math.max(600, Math.min(2350, S.frontX - 90)), y: 660 },
+          conquest: S.conquest, frontX: S.frontX, stats: S.stats,
+          questsDone: S.questsDone, auto: S.auto,
+          cam: { x: 640, y: 640, z: 1 },
+          savedRates: S.rates, savedAt: Date.now(), muted: S.muted
+        });
+      }
+      function save() {
+        if (!S) return;
+        try { localStorage.setItem(SAVE_KEY, serialize()); } catch (e) { /* private mode */ }
+      }
+      function readSave() {
+        try {
+          var raw = localStorage.getItem(SAVE_KEY);
+          if (!raw) return null;
+          var o = JSON.parse(raw);
+          return o && o.v === 1 ? o : null;
+        } catch (e) { return null; }
+      }
+      function burnSave() {
+        try { localStorage.removeItem(SAVE_KEY); } catch (e) { /* noop */ }
+      }
+      function stateFromSave(o) {
+        var s = newGame(o.seed || (Math.random() * 4294967295));
+        s.time = o.time || 0;
+        s.res = { wood: 0, stone: 0, iron: 0, crystal: 0, valor: 0 };
+        RES_KEYS.forEach(function (k) { s.res[k] = Math.max(0, (o.res && o.res[k]) || 0); });
+        s.stockLvl = clamp(o.stockLvl || 1, 1, STOCK.max);
+        ["bunkhouse", "workshop", "barracks", "forge"].forEach(function (k) {
+          s.buildings[k] = clamp((o.buildings && o.buildings[k]) || 0, 0, BUILD[k].max);
+        });
+        s.upg = {}; UPG.forEach(function (u) { s.upg[u.id] = clamp((o.upg && o.upg[u.id]) || 0, 0, u.max); });
+        s.tech = {}; TECH.forEach(function (t) { s.tech[t.id] = clamp((o.tech && o.tech[t.id]) || 0, 0, t.max); });
+        s.focus = ["auto", "wood", "stone", "iron", "crystal"].indexOf(o.focus) >= 0 ? o.focus : "auto";
+        s.conquest = Math.max(0, o.conquest || 0);
+        s.frontX = clamp(o.frontX || 1600 + s.conquest * 54, 1280, 2440);
+        s.stats = Object.assign(s.stats, o.stats || {});
+        s.questsDone = Array.isArray(o.questsDone) ? o.questsDone.slice() : [];
+        if (o.auto) UNIT_ORDER.forEach(function (k) { s.auto[k] = !!o.auto[k]; });
+        s.muted = !!o.muted;
+        initPlots(s);
+        // make the derived getters (hpMult, beds, …) read the state under construction
+        S = s;
+        // workers — stagger their cycles so income arrives smoothly
+        var n = clamp(o.workerCount || 0, 0, Math.min((s.buildings.bunkhouse || 0) * WORKER.slotsPerBunk, WORKER.maxWorkers));
+        for (var i = 0; i < n; i++) {
+          s.workers.push({ phase: "harvest", t: 0, res: "wood", carry: 0,
+            stagger: (i / Math.max(1, n)) });
+        }
+        // soldiers — reform at the rally, battle-ready
+        var counts = o.unitCounts || {};
+        UNIT_ORDER.forEach(function (k) {
+          var c = clamp(counts[k] || 0, 0, 40);
+          for (var j = 0; j < c; j++) s.units.push(spawnUnit(k, true));
+        });
+        s.waveTimer = 20; // the desktop build also re-arms waves ~20s after load
+        return s;
+      }
+      function offlineGains(o) {
+        var out = { dur: 0, gains: {} };
+        var elapsed = clamp((Date.now() - (o.savedAt || Date.now())) / 1000, 0, 7200);
+        if (elapsed <= 90 || !o.savedRates) return null;
+        var stockLvl = clamp(o.stockLvl || 1, 1, STOCK.max);
+        var cap = STOCK.cap(stockLvl);
+        ["wood", "stone", "iron", "crystal"].forEach(function (k) {
+          var have = (o.res && o.res[k]) || 0;
+          var g = (o.savedRates[k] || 0) * elapsed * 0.35; // skeleton pace, like desktop
+          if (g < 1) return;
+          var applied = Math.min(g, Math.max(0, cap - have));
+          if (applied >= 1) out.gains[k] = Math.floor(applied);
+        });
+        out.dur = elapsed;
+        return Object.keys(out.gains).length ? out : null;
+      }
+
+      /* ---------------- war entities ---------------- */
+      var FIELD_W = 1000; // virtual battlefield width
+      var FIELD_H = 300;
+      var SCALE = 0.62;   // world units → field px (ranges/speeds)
+      var RALLY_X = 190, SPAWN_X = 985, RAID_X = 34;
+
+      function spawnUnit(type, quiet) {
+        var d = UNIT[type];
+        var u = {
+          type: type, hp: Math.round(d.hp * hpMult()), maxhp: Math.round(d.hp * hpMult()),
+          x: RALLY_X + rnd(-34, 34), y: rnd(FIELD_H * 0.42, FIELD_H * 0.86),
+          cd: rnd(0, d.cd * 0.5), lunge: 0, flash: 0, calm: 0, bob: rnd(0, 6.28), face: 1
+        };
+        if (!quiet) {
+          FX.rings.push({ x: u.x, y: u.y, r: 6, max: 42, life: 0.4, t: 0, color: "#ffe0a3" });
+          burst(u.x, u.y, "#ffd86b", 8);
+        }
+        return u;
+      }
+      function spawnEnemy(type, wave) {
+        var d = FOE[type];
+        var hp = Math.round(d.hp * hpScale(wave));
+        return {
+          type: type, hp: hp, maxhp: hp, dmgM: dmgScale(wave),
+          x: SPAWN_X + rnd(0, 24), y: rnd(FIELD_H * 0.3, FIELD_H * 0.9),
+          cd: rnd(0, d.cd), lunge: 0, flash: 0, bob: rnd(0, 6.28), face: -1,
+          raided: false, raidCd: 0, loiter: false
+        };
+      }
+      function burst(x, y, color, n) {
+        for (var i = 0; i < n; i++) {
+          if (FX.particles.length > 160) break;
+          var a = Math.random() * 6.28, sp = rnd(30, 130);
+          FX.particles.push({ x: x, y: y, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp - 40, life: rnd(0.25, 0.55), t: 0, color: color, size: rnd(1.4, 3.2) });
+        }
+      }
+      function cFloat(x, y, text, color, size) {
+        if (FX.floats.length > 26) FX.floats.shift();
+        FX.floats.push({ x: x, y: y, text: text, color: color || "#ffe9c9", size: size || 12, life: 0.9, t: 0 });
+      }
+
+      /* ---------------- toasts & floaters (DOM) ---------------- */
+      var toastBox = $("toasts");
+      function toast(kind, title, sub) {
+        if (!toastBox) return;
+        var icons = { good: "✨", war: "⚔️", quest: "🏆", bad: "💥" };
+        var t = el("div", "toast " + (kind || ""));
+        t.appendChild(el("div", "tico", icons[kind] || "🔥"));
+        var body = el("div");
+        body.appendChild(el("b", null, esc(title)));
+        if (sub) body.appendChild(el("span", null, esc(sub)));
+        t.appendChild(body);
+        t.addEventListener("click", function () { kill(); });
+        toastBox.appendChild(t);
+        while (toastBox.children.length > 3) toastBox.removeChild(toastBox.firstChild);
+        var done = false;
+        function kill() {
+          if (done) return; done = true;
+          t.classList.add("out");
+          setTimeout(function () { if (t.parentNode) t.parentNode.removeChild(t); }, 320);
+        }
+        setTimeout(kill, kind === "war" || kind === "quest" ? 4600 : 3600);
+      }
+      function esc(str) {
+        return String(str).replace(/[&<>"']/g, function (c) {
+          return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
+        });
+      }
+      var floaterBox = $("floaters");
+      function floater(x, y, text, cls) {
+        if (!floaterBox) return;
+        var f = el("div", "floater " + (cls || ""), esc(text));
+        f.style.left = x + "px"; f.style.top = y + "px";
+        floaterBox.appendChild(f);
+        setTimeout(function () { if (f.parentNode) f.parentNode.removeChild(f); }, 900);
+      }
+
+      /* ---------------- player actions ---------------- */
+      function bumpCombo() {
+        S.combo += 1;
+        S.comboTimer = 2.5;
+        if (S.combo > S.maxCombo) S.maxCombo = S.combo;
+      }
+
+      function tapNode(key, cx, cy) {
+        var p = null, i;
+        for (i = 0; i < PLOTS.length; i++) if (PLOTS[i].key === key) p = PLOTS[i];
+        if (!p || !plotUnlocked(p)) return;
+        var plot = S.plots[key];
+        if (plot.amount <= 0) { SFX.error(); return; }
+        bumpCombo();
+        var critChance = Math.min(0.55, 0.16 + S.combo * 0.03);
+        var crit = Math.random() < critChance || (S.combo > 0 && S.combo % 5 === 0);
+        var power = clickPower() * (crit ? 2 : 1);
+        var take = Math.min(power, plot.amount);
+        plot.amount -= take;
+        var applied = gain(p.res, take);
+        if (p.res === "wood") S.stats.gatheredWood += take;
+        addDeposit(p.res, applied);
+        floater(cx, cy, "+" + take, crit ? "crit" : "");
+        if (crit) { SFX.crit(); floater(cx, cy - 26, "CRIT!", "crit"); }
+        else SFX.chop();
+        var tile = document.querySelector('.node-tile[data-key="' + key + '"]');
+        if (tile) { tile.classList.remove("hit"); void tile.offsetWidth; tile.classList.add("hit"); }
+        if (plot.amount <= 0) {
+          plot.regrowT = p.regrow;
+          floater(cx, cy - 12, "FELLED!", "fell");
+          SFX.coin();
+        }
+        refreshDomain(true);
+      }
+
+      function hireWorker() {
+        if (S.workers.length >= beds()) {
+          SFX.error();
+          if (S.buildings.bunkhouse >= BUILD.bunkhouse.max)
+            toast("bad", "Crew at full strength", "All bunkhouses raised — the crew is at full strength.");
+          else
+            toast("bad", "All beds full", "Build another bunkhouse for more beds.");
+          return;
+        }
+        var cost = hireCost(S.workers.length);
+        if (!pay(cost)) { SFX.error(); return; }
+        S.workers.push({ phase: "harvest", t: 0, res: "wood", carry: 0, stagger: 0 });
+        SFX.hire();
+        if (S.workers.length === 1) toast("good", "Your first worker!", "They harvest and haul on their own now.");
+        else toast("good", "Worker hired", "The crew grows — " + S.workers.length + " hands at work.");
+        refreshDomain(true);
+      }
+
+      function buildBuilding(key) {
+        var b = BUILD[key];
+        var lvl = S.buildings[key];
+        if (lvl >= b.max) return;
+        if (!pay(b.cost(lvl))) { SFX.error(); return; }
+        S.buildings[key] = lvl + 1;
+        SFX.build();
+        toast("good", b.name + " built", b.desc);
+        if (key === "barracks" && lvl === 0) {
+          S.waveTimer = Math.min(S.waveTimer + 10, 44);
+          toast("war", "The Horde stirs...", "A war banner will draw raiders. Train soldiers!");
+          SFX.horn();
+        }
+        if (key === "workshop" || key === "forge") rebuildUnlocks();
+        refreshAll(true);
+      }
+
+      function expandStock() {
+        if (S.stockLvl >= STOCK.max) { SFX.error(); return; }
+        if (!pay(STOCK.cost(S.stockLvl))) { SFX.error(); return; }
+        S.stockLvl += 1;
+        SFX.build();
+        toast("good", "Stockpile expanded", "Capacity doubled to " + fmt(storageCap()) + ".");
+        refreshAll(true);
+      }
+
+      function buyUpg(id) {
+        var u = null, i;
+        for (i = 0; i < UPG.length; i++) if (UPG[i].id === id) u = UPG[i];
+        if (!u) return;
+        var lvl = upgL(id);
+        if (lvl >= u.max) return;
+        if (!pay(u.cost(lvl))) { SFX.error(); return; }
+        S.upg[id] = lvl + 1;
+        SFX.learn();
+        toast("good", u.name + " " + (lvl + 1) + "/" + u.max, u.desc);
+        refreshAll(true);
+      }
+
+      function learnTech(id) {
+        var t = null, i;
+        for (i = 0; i < TECH.length; i++) if (TECH[i].id === id) t = TECH[i];
+        if (!t) return;
+        var lvl = techL(id);
+        if (lvl >= t.max) return;
+        if (!pay(t.cost(lvl))) { SFX.error(); return; }
+        S.tech[id] = lvl + 1;
+        SFX.learn();
+        if (id === "archery") toast("quest", "Archers unlocked", "Train them at the Barracks.");
+        else if (id === "heavy") toast("quest", "Guardians unlocked", "A living wall answers your banner.");
+        else if (id === "golem") toast("quest", "War Golems unlocked", "Crystal-fed titans join the line.");
+        else toast("good", t.name + " " + (lvl + 1) + "/" + t.max, t.desc(lvl + 1));
+        refreshAll(true);
+      }
+
+      function trainUnit(type) {
+        var d = UNIT[type];
+        if (d.tech && !techL(d.tech)) { SFX.error(); return; }
+        if (S.buildings.barracks < 1) { SFX.error(); toast("bad", "No barracks", "Raise a Barracks to train soldiers."); return; }
+        if (S.queue.length >= queueSlots()) { SFX.error(); return; }
+        if (S.units.length + S.queue.length >= capArmy()) { SFX.error(); return; }
+        if (!pay(d.cost)) { SFX.error(); return; }
+        S.queue.push({ type: type, t: d.train / trainSpeedF(), total: d.train / trainSpeedF() });
+        SFX.tapui();
+        refreshFront(true);
+      }
+
+      function toggleAuto(type) {
+        S.auto[type] = !S.auto[type];
+        SFX.tapui();
+        refreshFront(true);
+      }
+
+      function cancelQueue(type) {
+        for (var i = 0; i < S.queue.length; i++) {
+          if (S.queue[i].type === type) {
+            var q = S.queue.splice(i, 1)[0];
+            var d = UNIT[q.type];
+            for (var k in d.cost) S.res[k] = (S.res[k] || 0) + d.cost[k]; // full refund, past the cap
+            SFX.coin();
+            refreshFront(true);
+            return;
+          }
+        }
+      }
+
+      function setFocus(f) {
+        S.focus = f;
+        SFX.tapui();
+        refreshDomain(true);
+      }
+
+      function smiteAt(vx, vy) {
+        if (S.strikeCd > 0) {
+          FX.rings.push({ x: vx, y: vy, r: 3, max: 18, life: 0.2, t: 0, color: "#ffd76b" });
+          return false;
+        }
+        // find the closest living foe to the tap
+        var best = null, bd = 52;
+        S.enemies.forEach(function (e) {
+          if (e.hp <= 0) return;
+          var d = Math.hypot(e.x - vx, e.y - vy);
+          if (d < bd) { bd = d; best = e; }
+        });
+        if (!best) {
+          // ground tap — dust, no combo
+          burst(vx, vy, "#c8b98a", 5);
+          SFX.tapui();
+          return false;
+        }
+        doSmite(best, vx, vy);
+        return true;
+      }
+
+      function battleCall() {
+        if (S.strikeCd > 0) return;
+        var best = null;
+        S.enemies.forEach(function (e) {
+          if (e.hp <= 0) return;
+          if (!best || e.x < best.x) best = e;
+        });
+        if (!best) { SFX.error(); return; }
+        doSmite(best, best.x, best.y);
+      }
+
+      function doSmite(target, vx, vy) {
+        var lvl = techL("strike");
+        S.strikeCd = lvl > 0 ? 0.85 : 0.52;
+        bumpCombo();
+        var dmg = STRIKE_DMG[Math.min(STRIKE_DMG.length - 1, lvl)] * (1 + Math.min(0.5, S.combo * 0.04));
+        dmg = Math.round(dmg);
+        // bolt from the heavens
+        FX.projs.push({ x: vx + rnd(-24, 24), y: -30, tx: target.x, ty: target.y - 8, t: 0, dur: 0.14, color: lvl > 0 ? "#ffd76b" : "#ffb25e", bolt: true });
+        damageEnemy(target, dmg, true);
+        if (lvl > 0) {
+          var radius = (70 + lvl * 18) * SCALE;
+          FX.rings.push({ x: target.x, y: target.y, r: 8, max: radius, life: 0.35, t: 0, color: "#ffe694" });
+          S.enemies.forEach(function (e) {
+            if (e === target || e.hp <= 0) return;
+            if (Math.hypot(e.x - target.x, e.y - target.y) <= radius) {
+              damageEnemy(e, Math.round(dmg * 0.65), false);
+              FX.projs.push({ x: target.x, y: target.y - 10, tx: e.x, ty: e.y - 6, t: 0, dur: 0.1, color: "#ffe694", bolt: true });
+            }
+          });
+          SFX.smite();
+          cFloat(target.x, target.y - 30, "SMITE! -" + dmg, "#ffd76b", 14);
+        } else {
+          SFX.bolt();
+          cFloat(target.x, target.y - 26, "BOLT! -" + dmg, "#ffd76b", 12);
+        }
+        burst(target.x, target.y - 8, lvl > 0 ? "#ffd76b" : "#ff8a3d", lvl > 0 ? 14 : 8);
+        shakeCanvas();
+      }
+
+      function damageEnemy(e, dmg, countKill) {
+        if (e.hp <= 0) return;
+        e.hp -= dmg;
+        e.flash = 0.14;
+        if (e.hp <= 0) killEnemy(e);
+        else if (Math.random() < 0.4) SFX.hit();
+      }
+
+      function killEnemy(e) {
+        e.hp = 0;
+        S.stats.kills += 1;
+        var v = FOE[e.type].valor;
+        gain("valor", v);
+        addDeposit("valor", v);
+        burst(e.x, e.y, FOE[e.type].color, 12);
+        cFloat(e.x, e.y - 18, "+" + v + " valor", "#f2c14d", 10);
+        SFX.death();
+      }
+
+      function damageUnit(u, dmg) {
+        if (u.hp <= 0) return;
+        u.hp -= dmg;
+        u.flash = 0.14;
+        u.calm = 0;
+        if (u.hp <= 0) {
+          burst(u.x, u.y, UNIT[u.type].color, 10);
+          SFX.death();
+        }
+      }
+
+      var shakeAt = 0;
+      function shakeCanvas() {
+        var w = $("canvas-wrap");
+        if (!w || S.time - shakeAt < 0.12) return;
+        shakeAt = S.time;
+        w.classList.remove("shake"); void w.offsetWidth; w.classList.add("shake");
+      }
+
+      /* ---------------- simulation ---------------- */
+      function tickWorkers(dt) {
+        if (!S.workers.length) return;
+        var list = autoResList();
+        var ht = harvestTime(), travel = 2.6 / workerSpeedF(), carry = carryCap();
+        S.workers.forEach(function (w, i) {
+          if (w.phase === "harvest") {
+            w.t += dt / Math.max(0.05, (1 + (w.stagger || 0) * 0));
+            var need = carry * ht;
+            if (w.t >= need * ((i % 5) * 0.06 + 0.82)) { // slight per-worker variance
+              w.phase = "return"; w.t = 0;
+              w.res = S.focus === "auto" ? list[(i + Math.floor(S.time / 7)) % list.length] : S.focus;
+              if (w.res === "crystal" && S.conquest < 2) w.res = "wood";
+            }
+          } else {
+            w.t += dt;
+            if (w.t >= travel) {
+              w.phase = "harvest"; w.t = 0;
+              var applied = gain(w.res, carry);
+              addDeposit(w.res, applied);
+            }
+          }
+        });
+      }
+
+      function tickPlots(dt) {
+        PLOTS.forEach(function (p) {
+          var plot = S.plots[p.key];
+          if (plot.amount <= 0 && plot.regrowT > 0) {
+            plot.regrowT -= dt;
+            if (plot.regrowT <= 0) {
+              plot.regrowT = 0;
+              plot.amount = p.amount;
+              if (plotUnlocked(p)) {
+                var tile = document.querySelector('.node-tile[data-key="' + p.key + '"]');
+                if (tile) { tile.classList.remove("just-unlocked"); void tile.offsetWidth; tile.classList.add("just-unlocked"); }
+              }
+            }
+          }
+        });
+        // ruins surface as the line moves
+        if (S.conquest >= 2 && !S.ruinAnnounced) {
+          S.ruinAnnounced = true;
+          toast("quest", "Ruins surfaced", "Old crystal ruins broke ground — tap them for crystal.");
+        }
+      }
+
+      function tickWar(dt) {
+        var warOn = S.buildings.barracks > 0 || S.conquest > 0 || S.enemies.length > 0;
+        // wave countdown
+        if (warOn && !S.waveActive) {
+          S.waveTimer -= dt;
+          if (S.waveTimer <= 0) startWave();
+        }
+        // staggered spawns
+        if (S.pending.length) {
+          var w = S.conquest + 1;
+          for (var i = 0; i < S.pending.length; i++) S.pending[i].delay -= dt;
+          while (S.pending.length && S.pending[0].delay <= 0) {
+            var p = S.pending.shift();
+            S.enemies.push(spawnEnemy(p.type, w));
+          }
+        }
+        // queues → soldiers
+        for (var q = S.queue.length - 1; q >= 0; q--) {
+          S.queue[q].t -= dt;
+          if (S.queue[q].t <= 0) {
+            var type = S.queue[q].type;
+            S.queue.splice(q, 1);
+            S.units.push(spawnUnit(type, false));
+            SFX.coin();
+          }
+        }
+        // auto-train
+        UNIT_ORDER.forEach(function (k) {
+          if (!S.auto[k]) return;
+          var d = UNIT[k];
+          if (d.tech && !techL(d.tech)) return;
+          if (S.buildings.barracks < 1) return;
+          if (S.queue.length >= queueSlots()) return;
+          if (S.units.length + S.queue.length >= capArmy()) return;
+          if (!canPay(d.cost)) return;
+          pay(d.cost);
+          S.queue.push({ type: k, t: d.train / trainSpeedF(), total: d.train / trainSpeedF() });
+        });
+
+        moveAndFight(dt);
+
+        // wave won?
+        if (S.waveActive && !S.enemies.length && !S.pending.length) winWave();
+      }
+
+      function startWave() {
+        var w = S.conquest + 1;
+        S.waveNum = w;
+        var comp = waveComp(w);
+        var delay = 0;
+        comp.forEach(function (c) {
+          for (var i = 0; i < c.count; i++) {
+            S.pending.push({ type: c.type, delay: delay });
+            delay += 0.34;
+          }
+        });
+        S.waveActive = true;
+        S.lineBroken = false;
+        S.waveTimer = WAVE_GAP;
+        SFX.horn();
+        toast("war", "Wave " + w + " approaches!", comp.map(function (c) { return FOE[c.type].name + " ×" + c.count; }).join(" · "));
+        if (!S.firstWaveShown) { S.firstWaveShown = true; switchTab("front"); }
+        setWarBadge(true);
+      }
+
+      function winWave() {
+        var c = S.conquest + 1;
+        S.conquest = c;
+        S.stats.wavesWon += 1;
+        S.waveActive = false;
+        S.waveTimer = WAVE_GAP;
+        S.frontX = Math.min(2440, S.frontX + 54);
+        var rew = conquestReward(c);
+        var parts = [];
+        Object.keys(rew).forEach(function (k) {
+          var applied = gain(k, rew[k]);
+          if (applied > 0) { addDeposit(k, applied); parts.push("+" + applied + " " + RES[k].label); }
+        });
+        SFX.victory();
+        toast("quest", "Conquest " + c + "!", "The line advances 54 paces. Spoils: " + (parts.join(" · ") || "the land itself"));
+        if (c === 2) { /* ruin announcement handled in tickPlots */ }
+        setWarBadge(false);
+        refreshAll(true);
+        save();
+      }
+
+      function moveAndFight(dt) {
+        var units = S.units, foes = S.enemies;
+        // cull the dead
+        for (var i = units.length - 1; i >= 0; i--) if (units[i].hp <= 0) units.splice(i, 1);
+        for (var j = foes.length - 1; j >= 0; j--) if (foes[j].hp <= 0) foes.splice(j, 1);
+
+        // line broken?
+        if (S.waveActive && foes.length && !units.length && !S.lineBroken) {
+          S.lineBroken = true;
+          toast("bad", "Your line has broken!", "Train reinforcements before the ground is lost.");
+          SFX.raid();
+        }
+
+        var dm = dmgMult();
+        // ---- player units ----
+        units.forEach(function (u) {
+          var d = UNIT[u.type];
+          u.flash = Math.max(0, u.flash - dt);
+          u.lunge = Math.max(0, u.lunge - dt * 4);
+          u.calm += dt;
+          var target = nearest(u, foes);
+          var rng = Math.max(14, d.rng * SCALE);
+          if (target) {
+            var dist = Math.hypot(target.x - u.x, target.y - u.y);
+            u.face = target.x >= u.x ? 1 : -1;
+            if (dist > rng) {
+              step(u, target.x, target.y, d.spd * SCALE, dt);
+            } else {
+              u.cd -= dt;
+              if (u.cd <= 0) {
+                u.cd = d.cd;
+                u.lunge = 1;
+                attack(u, target, Math.round(d.dmg * dm), d, rng);
+              }
+            }
+          } else {
+            // fall back to the rally, mend wounds
+            if (Math.abs(u.x - RALLY_X) > 26) step(u, RALLY_X, u.y, d.spd * SCALE * 0.7, dt);
+            if (u.calm > 4 && u.hp < u.maxhp) u.hp = Math.min(u.maxhp, u.hp + u.maxhp * 0.03 * dt);
+          }
+        });
+
+        // ---- the horde ----
+        foes.forEach(function (e) {
+          var d = FOE[e.type];
+          e.flash = Math.max(0, e.flash - dt);
+          e.lunge = Math.max(0, e.lunge - dt * 4);
+          var target = nearest(e, units);
+          var rng = Math.max(13, d.rng * SCALE);
+          if (target) {
+            e.loiter = false;
+            var dist = Math.hypot(target.x - e.x, target.y - e.y);
+            e.face = target.x >= e.x ? 1 : -1;
+            if (dist > rng) step(e, target.x, target.y, d.spd * SCALE, dt);
+            else {
+              e.cd -= dt;
+              if (e.cd <= 0) {
+                e.cd = d.cd;
+                e.lunge = 1;
+                attackFoe(e, target, Math.round(d.dmg * e.dmgM), d);
+              }
+            }
+          } else {
+            // no soldiers left — march on the stockpile
+            if (e.x > RAID_X + 14) {
+              step(e, RAID_X, e.y, d.spd * SCALE * 0.8, dt);
+              e.loiter = false;
+            } else {
+              e.loiter = true;
+              e.raidCd -= dt;
+              if (!e.raided || e.raidCd <= 0) {
+                e.raided = true;
+                e.raidCd = 10;
+                raidStockpile();
+              }
+            }
+          }
+        });
+      }
+
+      function step(ent, tx, ty, spd, dt) {
+        var dx = tx - ent.x, dy = ty - ent.y;
+        var dist = Math.hypot(dx, dy) || 1;
+        var mv = Math.min(dist, spd * dt);
+        ent.x += (dx / dist) * mv;
+        ent.y += (dy / dist) * mv * 0.6;
+        ent.x = clamp(ent.x, 8, FIELD_W + 30);
+      }
+      function nearest(from, list) {
+        var best = null, bd = Infinity;
+        list.forEach(function (o) {
+          if (o.hp <= 0) return;
+          var d = (o.x - from.x) * (o.x - from.x) + (o.y - from.y) * (o.y - from.y);
+          if (d < bd) { bd = d; best = o; }
+        });
+        return best;
+      }
+      function attack(u, target, dmg, d, rng) {
+        if (d.ranged) {
+          FX.projs.push({ x: u.x, y: u.y - 8, tx: target.x, ty: target.y - 6, t: 0, dur: 0.22, color: "#ffe0a3" });
+        }
+        damageEnemy(target, dmg, true);
+        u.calm = 0;
+        if (d.aoe) {
+          var r = d.aoe * SCALE;
+          FX.rings.push({ x: target.x, y: target.y, r: 4, max: r, life: 0.3, t: 0, color: "#6fd3e8" });
+          S.enemies.forEach(function (e) {
+            if (e === target || e.hp <= 0) return;
+            if (Math.hypot(e.x - target.x, e.y - target.y) <= r) damageEnemy(e, Math.round(dmg * 0.5), false);
+          });
+        }
+      }
+      function attackFoe(e, target, dmg, d) {
+        if (d.ranged) {
+          FX.projs.push({ x: e.x, y: e.y - 8, tx: target.x, ty: target.y - 6, t: 0, dur: 0.24, color: "#c58aff" });
+        }
+        damageUnit(target, dmg);
+      }
+
+      var lastRaidToast = -99;
+      function raidStockpile() {
+        var stolenW = Math.min(S.res.wood, Math.max(4, Math.round(S.res.wood * 0.08)));
+        var stolenS = Math.min(S.res.stone, Math.max(3, Math.round(S.res.stone * 0.08)));
+        S.res.wood -= stolenW;
+        S.res.stone -= stolenS;
+        if (S.time - lastRaidToast > 4) {
+          lastRaidToast = S.time;
+          toast("bad", "The stockpile was raided!", "−" + stolenW + " wood · −" + stolenS + " stone. Keep soldiers on the line.");
+        }
+        SFX.raid();
+      }
+
+      function tickStrikes(dt) {
+        S.strikeCd = Math.max(0, S.strikeCd - dt);
+        if (S.comboTimer > 0) {
+          S.comboTimer -= dt;
+          if (S.comboTimer <= 0) { S.comboTimer = 0; S.combo = 0; }
+        }
+      }
+
+      function tickFX(dt) {
+        var i;
+        for (i = FX.particles.length - 1; i >= 0; i--) {
+          var p = FX.particles[i];
+          p.t += dt;
+          p.x += p.vx * dt; p.y += p.vy * dt; p.vy += 220 * dt;
+          if (p.t >= p.life) FX.particles.splice(i, 1);
+        }
+        for (i = FX.projs.length - 1; i >= 0; i--) {
+          var pr = FX.projs[i];
+          pr.t += dt;
+          if (pr.t >= pr.dur) {
+            if (!pr.bolt) burst(pr.tx, pr.ty, pr.color, 3);
+            FX.projs.splice(i, 1);
+          }
+        }
+        for (i = FX.floats.length - 1; i >= 0; i--) {
+          var f = FX.floats[i];
+          f.t += dt;
+          if (f.t >= f.life) FX.floats.splice(i, 1);
+        }
+        for (i = FX.rings.length - 1; i >= 0; i--) {
+          var r = FX.rings[i];
+          r.t += dt;
+          if (r.t >= r.life) FX.rings.splice(i, 1);
+        }
+      }
+
+      var questTick = 0;
+      function tickQuests(dt) {
+        questTick += dt;
+        if (questTick < 0.3) return;
+        questTick = 0;
+        QUESTS.forEach(function (q) {
+          if (S.questsDone.indexOf(q.id) >= 0) return;
+          var p = q.prog(S);
+          if (p >= q.target) {
+            S.questsDone.push(q.id);
+            var parts = [];
+            Object.keys(q.reward).forEach(function (k) {
+              gain(k, q.reward[k]);
+              parts.push("+" + q.reward[k] + " " + RES[k].label);
+            });
+            SFX.quest();
+            toast("quest", q.name, q.desc + " — " + parts.join(" · "));
+            refreshRealm(true);
+          }
+        });
+      }
+
+      function sim(dt) {
+        S.time += dt;
+        tickStrikes(dt);
+        tickWorkers(dt);
+        tickPlots(dt);
+        tickWar(dt);
+        tickRates();
+        tickQuests(dt);
+        tickFX(dt);
+      }
+
+      /* =====================================================================
+         CANVAS — the front
+         ===================================================================== */
+      var canvas = $("battle"), ctx = null, cw = 0, ch = 0, vh = FIELD_H, dpr = 1;
+      if (canvas && canvas.getContext) ctx = canvas.getContext("2d");
+
+      function sizeCanvas() {
+        if (!canvas) return;
+        var wrap = canvas.parentNode;
+        var w = wrap ? wrap.clientWidth : 320;
+        var h = canvas.clientHeight || 200;
+        if (!w) return;
+        dpr = Math.min(2.5, window.devicePixelRatio || 1);
+        canvas.width = Math.round(w * dpr);
+        canvas.height = Math.round(h * dpr);
+        cw = w; ch = h;
+        vh = ch / (cw / FIELD_W); // keep x-scale uniform, height follows css
+      }
+
+      function draw(t) {
+        if (!ctx || !cw) return;
+        var sc = (cw / FIELD_W) * dpr;
+        ctx.setTransform(sc, 0, 0, sc, 0, 0);
+        var H = vh;
+        // sky
+        var sky = ctx.createLinearGradient(0, 0, 0, H);
+        sky.addColorStop(0, "#191120");
+        sky.addColorStop(0.55, "#241611");
+        sky.addColorStop(1, "#171009");
+        ctx.fillStyle = sky;
+        ctx.fillRect(0, 0, FIELD_W, H);
+        // embers in the sky
+        ctx.globalAlpha = 0.5;
+        for (var ei = 0; ei < 14; ei++) {
+          var ex = (ei * 173.3 + t * (8 + (ei % 5) * 3)) % (FIELD_W + 40) - 20;
+          var ey = (H * 0.15) + Math.sin(t * 0.6 + ei * 2.4) * H * 0.08 + (ei % 4) * H * 0.045;
+          ctx.fillStyle = ei % 3 === 0 ? "#ffd86b" : "#e0641a";
+          ctx.fillRect(ex, ey, 1.6, 1.6);
+        }
+        ctx.globalAlpha = 1;
+        // hills
+        ctx.fillStyle = "#120c0a";
+        ctx.beginPath();
+        ctx.moveTo(0, H * 0.42);
+        for (var hx = 0; hx <= FIELD_W; hx += 40) {
+          ctx.lineTo(hx, H * 0.42 - Math.sin(hx * 0.011 + 2) * 16 - Math.sin(hx * 0.031) * 7);
+        }
+        ctx.lineTo(FIELD_W, H); ctx.lineTo(0, H); ctx.closePath(); ctx.fill();
+        // ground
+        var gr = ctx.createLinearGradient(0, H * 0.5, 0, H);
+        gr.addColorStop(0, "#241a10");
+        gr.addColorStop(1, "#160f08");
+        ctx.fillStyle = gr;
+        ctx.fillRect(0, H * 0.5, FIELD_W, H * 0.5);
+        // the line (front marker)
+        var lineX = 500 + Math.min(120, S.conquest * 8);
+        ctx.strokeStyle = "rgba(255, 215, 107, 0.16)";
+        ctx.lineWidth = 2;
+        ctx.setLineDash([5, 7]);
+        ctx.beginPath(); ctx.moveTo(lineX, H * 0.34); ctx.lineTo(lineX, H); ctx.stroke();
+        ctx.setLineDash([]);
+        // rally banner (home)
+        drawBanner(RALLY_X - 60, H * 0.3, "#e0641a");
+        // horde-side banner
+        drawBanner(SPAWN_X - 10, H * 0.26, "#7e2417");
+        // stockpile hint when raided
+        if (S.enemies.some(function (e) { return e.loiter; })) {
+          ctx.fillStyle = "rgba(255,90,60," + (0.5 + 0.4 * Math.sin(t * 8)) + ")";
+          ctx.font = "700 11px Sora, sans-serif";
+          ctx.fillText("⚠ RAID!", 12, H * 0.2);
+        }
+
+        // rings
+        FX.rings.forEach(function (r) {
+          var k = r.t / r.life;
+          ctx.globalAlpha = 1 - k;
+          ctx.strokeStyle = r.color;
+          ctx.lineWidth = 2.4 * (1 - k) + 0.6;
+          ctx.beginPath();
+          ctx.arc(r.x, r.y, r.r + (r.max - r.r) * k, 0, 6.283);
+          ctx.stroke();
+        });
+        ctx.globalAlpha = 1;
+
+        // projectiles
+        FX.projs.forEach(function (p) {
+          var k = p.t / p.dur;
+          var x = p.x + (p.tx - p.x) * k, y = p.y + (p.ty - p.y) * k;
+          ctx.strokeStyle = p.color;
+          ctx.lineWidth = p.bolt ? 2.6 : 1.6;
+          ctx.globalAlpha = 0.95;
+          ctx.beginPath();
+          ctx.moveTo(x - (p.tx - p.x) * 0.12, y - (p.ty - p.y) * 0.12 - (p.bolt ? 26 : 0));
+          ctx.lineTo(x, y);
+          ctx.stroke();
+        });
+        ctx.globalAlpha = 1;
+
+        // units
+        S.units.forEach(function (u) {
+          var d = UNIT[u.type];
+          var bob = Math.sin(t * 6 + u.bob) * 1.6;
+          var lunge = u.lunge * 4 * u.face;
+          drawFighter(u.x + lunge, u.y + bob, 6.4, d.color, u.hp / u.maxhp, u.flash > 0, false, bobPhase(t, u.bob));
+        });
+        // enemies
+        S.enemies.forEach(function (e) {
+          var d = FOE[e.type];
+          var bob = Math.sin(t * 5.4 + e.bob) * 1.8;
+          var lunge = e.lunge * 4 * e.face;
+          drawFighter(e.x + lunge, e.y + bob, 6.4 * d.scale, d.color, e.hp / e.maxhp, e.flash > 0, true, bobPhase(t, e.bob));
+        });
+        // pending-spawn dust on the horizon
+        if (S.pending.length) {
+          ctx.globalAlpha = 0.35 + 0.2 * Math.sin(t * 7);
+          ctx.fillStyle = "#ff5a3c";
+          ctx.font = "800 10px Sora, sans-serif";
+          ctx.fillText("☠ " + S.pending.length + " incoming", SPAWN_X - 92, H * 0.16);
+          ctx.globalAlpha = 1;
+        }
+
+        // particles
+        FX.particles.forEach(function (p) {
+          var k = 1 - p.t / p.life;
+          ctx.globalAlpha = Math.max(0, k);
+          ctx.fillStyle = p.color;
+          ctx.fillRect(p.x - p.size / 2, p.y - p.size / 2, p.size, p.size);
+        });
+        ctx.globalAlpha = 1;
+        // floating combat text
+        FX.floats.forEach(function (f) {
+          var k = f.t / f.life;
+          ctx.globalAlpha = 1 - k;
+          ctx.fillStyle = f.color;
+          ctx.font = "900 " + f.size + "px Sora, sans-serif";
+          ctx.textAlign = "center";
+          ctx.fillText(f.text, f.x, f.y - k * 26);
+          ctx.textAlign = "left";
+        });
+        ctx.globalAlpha = 1;
+
+        // idle tip
+        if (!S.waveActive && !S.enemies.length && S.buildings.barracks > 0) {
+          ctx.fillStyle = "rgba(246,234,210,0.4)";
+          ctx.font = "600 10px Sora, sans-serif";
+          ctx.textAlign = "center";
+          ctx.fillText("the line holds… next wave in " + Math.ceil(S.waveTimer) + "s", FIELD_W / 2, H * 0.14);
+          ctx.textAlign = "left";
+        }
+      }
+      function bobPhase(t, b) { return Math.sin(t * 6 + b) * 0.5; }
+      function drawBanner(x, y, color) {
+        ctx.strokeStyle = "#3a2c1c";
+        ctx.lineWidth = 2.4;
+        ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(x, y + 34); ctx.stroke();
+        ctx.fillStyle = color;
+        ctx.beginPath();
+        ctx.moveTo(x, y);
+        ctx.lineTo(x + 16, y + 5);
+        ctx.lineTo(x, y + 11);
+        ctx.closePath();
+        ctx.fill();
+      }
+      function drawFighter(x, y, r, color, hpk, flash, isFoe, squash) {
+        // shadow
+        ctx.globalAlpha = 0.35;
+        ctx.fillStyle = "#000";
+        ctx.beginPath();
+        ctx.ellipse(x, y + r * 0.9, r * 1.05, r * 0.4, 0, 0, 6.283);
+        ctx.fill();
+        ctx.globalAlpha = 1;
+        // body
+        ctx.fillStyle = flash ? "#ffffff" : color;
+        ctx.beginPath();
+        ctx.arc(x, y - r * (0.9 + squash * 0.1), r, 0, 6.283);
+        ctx.fill();
+        // rim
+        ctx.strokeStyle = isFoe ? "rgba(255,90,60,0.55)" : "rgba(255,225,175,0.5)";
+        ctx.lineWidth = 1.2;
+        ctx.stroke();
+        // eyes
+        ctx.fillStyle = isFoe ? "#ffd9d0" : "#20160e";
+        var ex = isFoe ? -r * 0.35 : r * 0.35;
+        ctx.fillRect(x + ex - 1, y - r * 1.15, 2, 2);
+        // hp bar when hurt
+        if (hpk < 0.999) {
+          var w = r * 2.4;
+          ctx.fillStyle = "rgba(0,0,0,0.6)";
+          ctx.fillRect(x - w / 2, y - r * 2.3, w, 2.6);
+          ctx.fillStyle = hpk > 0.5 ? "#a8ff8a" : hpk > 0.25 ? "#ffd76b" : "#ff6a4d";
+          ctx.fillRect(x - w / 2, y - r * 2.3, w * clamp(hpk, 0, 1), 2.6);
+        }
+      }
+
+      /* =====================================================================
+         DOM — build once, refresh often
+         ===================================================================== */
+      var uiRefs = {};
+
+      function costChips(cost) {
+        return Object.keys(cost).filter(function (k) { return cost[k] > 0; }).map(function (k) {
+          var ok = (S.res[k] || 0) >= cost[k];
+          return '<span class="cost' + (ok ? "" : " no") + '" style="--c:' + RES[k].color + '">●' + fmt(cost[k]) + "</span>";
+        }).join("");
+      }
+
+      function buildResStrip() {
+        var strip = $("res-strip");
+        strip.innerHTML = "";
+        RES_KEYS.forEach(function (k) {
+          var chip = el("div", "res-chip");
+          chip.innerHTML = '<span class="dot" style="background:' + RES[k].color + '"></span>' +
+            '<span class="amt" id="hud-' + k + '">0</span>' +
+            '<span class="rate" id="hud-' + k + '-rate"></span>';
+          strip.appendChild(chip);
+        });
+      }
+
+      function buildPlots() {
+        var grid = $("node-grid");
+        grid.innerHTML = "";
+        PLOTS.forEach(function (p) {
+          var tile = el("button", "node-tile");
+          tile.type = "button";
+          tile.setAttribute("data-key", p.key);
+          tile.setAttribute("aria-label", "Harvest " + p.name);
+          tile.innerHTML = PLOT_ART[p.key] +
+            '<span class="n-name">' + p.name + "</span>" +
+            '<span class="n-amt" id="plot-amt-' + p.key + '"></span>' +
+            '<span class="n-bar"><i id="plot-bar-' + p.key + '" style="background:' + RES[p.res].color + '"></i></span>' +
+            '<div class="n-regrow hidden" id="plot-regrow-' + p.key + '"></div>';
+          tile.addEventListener("click", function (ev) {
+            if (!S || S.paused) return;
+            tapNode(p.key, ev.clientX || window.innerWidth / 2, (ev.clientY || 200) - 10);
+          });
+          grid.appendChild(tile);
+        });
+      }
+
+      function buildFocusSeg() {
+        var seg = $("focus-seg");
+        seg.innerHTML = "";
+        ["auto", "wood", "stone", "iron", "crystal"].forEach(function (f) {
+          var b = el("button");
+          b.type = "button";
+          if (f === "auto") b.textContent = "AUTO";
+          else b.innerHTML = '<span class="sw" style="background:' + RES[f].color + '"></span>';
+          b.setAttribute("aria-label", f === "auto" ? "Workers choose freely" : "Prioritize " + f);
+          b.addEventListener("click", function () { setFocus(f); });
+          seg.appendChild(b);
+          uiRefs["focus-" + f] = b;
+        });
+      }
+
+      function buildStructRows() {
+        var box = $("struct-rows");
+        box.innerHTML = "";
+        BUILD_ORDER.forEach(function (key) {
+          var b = BUILD[key];
+          var row = el("div", "row");
+          row.innerHTML =
+            '<div class="gicon">' + b.icon + "</div>" +
+            '<div class="rmain"><div class="rname">' + b.name + ' <span class="lvl" id="lvl-' + key + '"></span></div>' +
+            '<div class="rdesc">' + b.desc + '</div>' +
+            '<div class="rcost" id="cost-' + key + '"></div></div>' +
+            '<div class="ract"><button class="btn btn-ember btn-sm" id="btn-' + key + '">BUILD</button></div>';
+          box.appendChild(row);
+          $("btn-" + key).addEventListener("click", function () { buildBuilding(key); });
+        });
+      }
+
+      function buildUpgRows() {
+        var econ = $("upg-econ"), war = $("upg-war");
+        econ.innerHTML = ""; war.innerHTML = "";
+        UPG.forEach(function (u) {
+          var row = el("div", "row");
+          row.innerHTML =
+            '<div class="gicon">' + u.icon + "</div>" +
+            '<div class="rmain"><div class="rname">' + u.name + ' <span class="lvl" id="ulvl-' + u.id + '"></span></div>' +
+            '<div class="rdesc">' + u.desc + '</div>' +
+            '<div class="rcost" id="ucost-' + u.id + '"></div></div>' +
+            '<div class="ract"><button class="btn btn-sm ' + (u.scope === "war" ? "btn-gold" : "btn-ember") + '" id="ubtn-' + u.id + '">BUY</button></div>';
+          (u.scope === "war" ? war : econ).appendChild(row);
+          $("ubtn-" + u.id).addEventListener("click", function () { buyUpg(u.id); });
+        });
+      }
+
+      function buildTechRows() {
+        var box = $("tech-rows");
+        box.innerHTML = "";
+        TECH.forEach(function (t) {
+          var row = el("div", "row");
+          row.innerHTML =
+            '<div class="gicon">' + t.icon + "</div>" +
+            '<div class="rmain"><div class="rname">' + t.name + ' <span class="lvl" id="tlvl-' + t.id + '"></span></div>' +
+            '<div class="rdesc" id="tdesc-' + t.id + '"></div>' +
+            '<div class="rcost" id="tcost-' + t.id + '"></div></div>' +
+            '<div class="ract"><button class="btn btn-gold btn-sm" id="tbtn-' + t.id + '">LEARN</button></div>';
+          box.appendChild(row);
+          $("tbtn-" + t.id).addEventListener("click", function () { learnTech(t.id); });
+        });
+      }
+
+      function buildArmyRows() {
+        var box = $("army-rows");
+        box.innerHTML = "";
+        UNIT_ORDER.forEach(function (k) {
+          var d = UNIT[k];
+          var row = el("div", "row");
+          row.id = "arow-" + k;
+          row.innerHTML =
+            '<div class="gicon" style="color:' + d.color + '">' + d.icon + "</div>" +
+            '<div class="rmain">' +
+              '<div class="rname">' + d.name + ' <span class="lvl" id="acount-' + k + '">×0</span></div>' +
+              '<div class="rdesc" id="adesc-' + k + '">' + d.desc + "</div>" +
+              '<div class="rcost" id="acost-' + k + '"></div>' +
+              '<div class="queue-pips" id="aq-' + k + '"></div>' +
+            "</div>" +
+            '<div class="ract">' +
+              '<button class="btn btn-ember btn-sm" id="atrain-' + k + '">TRAIN</button>' +
+              '<button class="toggle" id="aauto-' + k + '">AUTO</button>' +
+            "</div>";
+          box.appendChild(row);
+          $("atrain-" + k).addEventListener("click", function () { trainUnit(k); });
+          $("aauto-" + k).addEventListener("click", function () { toggleAuto(k); });
+        });
+      }
+
+      function buildQuestRows() {
+        var box = $("quest-rows");
+        box.innerHTML = "";
+        QUESTS.forEach(function (q) {
+          var row = el("div", "quest-row");
+          row.id = "qrow-" + q.id;
+          var rewards = Object.keys(q.reward).map(function (k) {
+            return '<span class="cost" style="--c:' + RES[k].color + '">●' + q.reward[k] + "</span>";
+          }).join("");
+          row.innerHTML =
+            '<div class="qcheck" id="qcheck-' + q.id + '">○</div>' +
+            '<div class="qmain"><div class="qname">' + q.name + '</div><div class="qdesc">' + q.desc + "</div>" +
+            '<div class="qprog"><div class="bar"><i id="qbar-' + q.id + '" style="background: linear-gradient(90deg,#ff7a29,#ffd86b)"></i></div>' +
+            '<span id="qnum-' + q.id + '">0/' + q.target + "</span></div></div>" +
+            '<div class="qreward">' + rewards + "</div>";
+          box.appendChild(row);
+        });
+      }
+
+      /* ---------------- refreshers ---------------- */
+      function refreshHUD() {
+        RES_KEYS.forEach(function (k) {
+          var a = $("hud-" + k), r = $("hud-" + k + "-rate");
+          if (a) a.textContent = fmt(S.res[k]);
+          if (r) r.textContent = S.rates[k] >= 0.05 ? "+" + S.rates[k].toFixed(1) + "/s" : "";
+        });
+        var total = S.res.wood + S.res.stone + S.res.iron + S.res.crystal;
+        var cap = storageCap();
+        $("stock-fill").style.width = clamp((total / cap) * 100, 0, 100) + "%";
+        $("stock-text").textContent = fmt(total) + "/" + fmt(cap);
+        $("conq-chip").textContent = "⚑ Conquest " + S.conquest;
+        var wm = $("wave-mini");
+        var warOn = S.buildings.barracks > 0 || S.conquest > 0 || S.enemies.length > 0;
+        if (!warOn) { wm.textContent = ""; wm.classList.remove("war"); }
+        else if (S.waveActive) {
+          wm.textContent = "⚔ WAVE " + S.waveNum + " — " + (S.enemies.length + S.pending.length) + " left";
+          wm.classList.add("war");
+        } else {
+          wm.textContent = "next wave " + Math.ceil(S.waveTimer) + "s";
+          wm.classList.remove("war");
+        }
+        $("btn-pause").classList.toggle("on", S.paused);
+      }
+
+      function refreshDomain(quick) {
+        // plots
+        PLOTS.forEach(function (p) {
+          var plot = S.plots[p.key];
+          var amt = $("plot-amt-" + p.key), bar = $("plot-bar-" + p.key), rg = $("plot-regrow-" + p.key);
+          var tile = document.querySelector('.node-tile[data-key="' + p.key + '"]');
+          if (!amt) return;
+          var unlocked = plotUnlocked(p);
+          if (tile) tile.classList.toggle("locked", !unlocked);
+          amt.textContent = unlocked ? plot.amount + " / " + p.amount : "";
+          bar.style.width = unlocked ? clamp((plot.amount / p.amount) * 100, 0, 100) + "%" : "0%";
+          if (!unlocked) {
+            rg.classList.remove("hidden");
+            rg.textContent = "🔒 Conquest " + p.unlock;
+          } else if (plot.amount <= 0 && plot.regrowT > 0) {
+            rg.classList.remove("hidden");
+            rg.textContent = "↻ " + Math.ceil(plot.regrowT) + "s";
+          } else rg.classList.add("hidden");
+        });
+        // combo
+        var cc = $("combo-chip");
+        cc.classList.toggle("hot", S.combo > 0);
+        $("combo-n").textContent = S.combo;
+        $("combo-fill").style.width = clamp((S.comboTimer / 2.5) * 100, 0, 100) + "%";
+        // crew
+        $("crew-count").textContent = S.workers.length + " / " + beds() + " beds";
+        $("crew-fill").style.width = beds() ? clamp((S.workers.length / beds()) * 100, 0, 100) + "%" : "0%";
+        var hb = $("btn-hire");
+        var hcost = hireCost(S.workers.length);
+        var full = S.workers.length >= beds();
+        hb.disabled = full || !canPay(hcost);
+        hb.innerHTML = full ? "ALL BEDS FULL" : "HIRE A WORKER " + costChips(hcost);
+        var note = $("crew-note");
+        if (S.buildings.bunkhouse === 0) note.textContent = "Build a Bunkhouse for beds — more hands, more everything.";
+        else if (full && S.buildings.bunkhouse >= BUILD.bunkhouse.max) note.textContent = "All bunkhouses raised — the crew is at full strength.";
+        else if (full) note.textContent = "All beds full — build another bunkhouse.";
+        else note.textContent = "Workers harvest and haul on their own — " + (RES_KEYS.filter(function (k) { return k !== "valor"; }).map(function (k) { return S.rates[k] > 0.05 ? RES[k].label.toLowerCase() + " " + S.rates[k].toFixed(1) + "/s" : ""; }).filter(Boolean).join(" · ") || "idle hands…");
+        // focus
+        ["auto", "wood", "stone", "iron", "crystal"].forEach(function (f) {
+          var b = uiRefs["focus-" + f];
+          if (b) b.classList.toggle("on", S.focus === f);
+        });
+        // stockpile row
+        $("stock-lvl").textContent = "Lv " + S.stockLvl;
+        var pips = $("stock-pips");
+        if (pips.children.length !== STOCK.max) {
+          pips.innerHTML = "";
+          for (var i = 0; i < STOCK.max; i++) pips.appendChild(el("i"));
+        }
+        for (var pi = 0; pi < pips.children.length; pi++) pips.children[pi].classList.toggle("on", pi < S.stockLvl);
+        var tot = S.res.wood + S.res.stone + S.res.iron + S.res.crystal;
+        $("stock-bar").style.width = clamp((tot / storageCap()) * 100, 0, 100) + "%";
+        $("stock-label").textContent = fmt(tot) + " / " + fmt(storageCap());
+        var sb = $("btn-stock");
+        if (S.stockLvl >= STOCK.max) { sb.disabled = true; sb.textContent = "MASTERED"; }
+        else { sb.disabled = !canPay(STOCK.cost(S.stockLvl)); sb.innerHTML = "EXPAND " + costChips(STOCK.cost(S.stockLvl)); }
+        // buildings
+        BUILD_ORDER.forEach(function (key) {
+          var b = BUILD[key], lvl = S.buildings[key];
+          var btn = $("btn-" + key);
+          var lvlEl = $("lvl-" + key), costEl = $("cost-" + key);
+          lvlEl.textContent = lvl + "/" + b.max;
+          if (lvl >= b.max) {
+            btn.disabled = true; btn.textContent = "MASTERED";
+            costEl.innerHTML = "";
+          } else {
+            var c = b.cost(lvl);
+            btn.disabled = !canPay(c);
+            btn.textContent = lvl === 0 ? "BUILD" : "RAISE";
+            costEl.innerHTML = costChips(c);
+          }
+        });
+        // panels visibility
+        $("panel-workshop").classList.toggle("hidden", S.buildings.workshop < 1);
+        $("panel-forge").classList.toggle("hidden", S.buildings.forge < 1);
+        // upgrades
+        UPG.forEach(function (u) {
+          var lvl = upgL(u.id);
+          $("ulvl-" + u.id).textContent = lvl + "/" + u.max;
+          var btn = $("ubtn-" + u.id), costEl = $("ucost-" + u.id);
+          if (lvl >= u.max) { btn.disabled = true; btn.textContent = "MASTERED"; costEl.innerHTML = ""; }
+          else {
+            var c = u.cost(lvl);
+            btn.disabled = !canPay(c);
+            btn.textContent = "BUY " + (lvl + 1);
+            costEl.innerHTML = costChips(c);
+          }
+        });
+        // techs
+        TECH.forEach(function (t) {
+          var lvl = techL(t.id);
+          $("tlvl-" + t.id).textContent = lvl + "/" + t.max;
+          $("tdesc-" + t.id).textContent = t.desc(lvl);
+          var btn = $("tbtn-" + t.id), costEl = $("tcost-" + t.id);
+          if (lvl >= t.max) { btn.disabled = true; btn.textContent = "LEARNED"; costEl.innerHTML = ""; }
+          else {
+            var c = t.cost(lvl);
+            btn.disabled = !canPay(c);
+            btn.textContent = "LEARN";
+            costEl.innerHTML = costChips(c);
+          }
+        });
+      }
+
+      function refreshFront(quick) {
+        $("front-conq").textContent = "⚑ " + S.conquest;
+        // war note / wave card
+        var warOn = S.buildings.barracks > 0 || S.conquest > 0 || S.enemies.length > 0;
+        var note = $("war-note");
+        if (!warOn) {
+          note.classList.remove("hidden");
+          note.innerHTML = 'The Horde gathers in the east. Raise a <b>Barracks</b> to answer — win waves to push the line and claim spoiled land.';
+        } else if (S.waveActive) {
+          note.classList.remove("hidden");
+          note.innerHTML = "<b>Wave " + S.waveNum + "</b> is on the field — " + (S.enemies.length + S.pending.length) + " foes remain. Hold the line!";
+        } else {
+          note.classList.add("hidden");
+        }
+        // smite button
+        var lvl = techL("strike");
+        var dmg = Math.round(STRIKE_DMG[Math.min(4, lvl)] * (1 + Math.min(0.5, S.combo * 0.04)));
+        var sb = $("btn-smite");
+        sb.classList.toggle("cooling", S.strikeCd > 0);
+        sb.classList.toggle("armed", lvl > 0);
+        $("smite-label").textContent = (lvl > 0 ? "Chain Smite" : "Commander Bolt") + " — " + dmg + " dmg" + (lvl > 0 ? " (AoE)" : "");
+        sb.querySelector("b").textContent = S.strikeCd > 0 ? "· · ·" : (lvl > 0 ? "SMITE!" : "BOLT!");
+        $("smite-cd").style.width = S.strikeCd > 0 ? clamp((S.strikeCd / (lvl > 0 ? 0.85 : 0.52)) * 100, 0, 100) + "%" : "0%";
+        // wave card
+        var wnum = S.conquest + 1;
+        var comp = waveComp(wnum);
+        $("wave-timer-label").textContent = !warOn ? "dormant" : S.waveActive ? "IN COMBAT" : "T−" + Math.ceil(S.waveTimer) + "s";
+        $("wave-fill").style.width = !warOn ? "0%" : S.waveActive ? "100%" : clamp((1 - S.waveTimer / WAVE_GAP) * 100, 0, 100) + "%";
+        var compBox = $("wave-comp");
+        var sig = comp.map(function (c) { return c.type + c.count; }).join();
+        if (compBox.getAttribute("data-sig") !== sig) {
+          compBox.setAttribute("data-sig", sig);
+          compBox.innerHTML = comp.map(function (c) {
+            return '<span class="foe-chip">' + FOE[c.type].name + " ×" + c.count + "</span>";
+          }).join("") + '<span class="foe-chip" style="border-color:rgba(242,193,77,0.35);color:#f2c14d;background:rgba(242,193,77,0.08)">Wave ' + wnum + "</span>";
+        }
+        // army
+        var cap = capArmy();
+        $("army-count").textContent = S.units.length + " / " + cap;
+        $("army-fill").style.width = clamp((S.units.length / cap) * 100, 0, 100) + "%";
+        UNIT_ORDER.forEach(function (k) {
+          var d = UNIT[k];
+          var locked = d.tech && !techL(d.tech);
+          var row = $("arow-" + k);
+          row.style.opacity = locked ? "0.45" : "1";
+          $("acount-" + k).textContent = "×" + S.units.filter(function (u) { return u.type === k; }).length;
+          $("adesc-" + k).textContent = locked ? "Requires " + techName(d.tech) + " at the Forge" : d.desc;
+          $("acost-" + k).innerHTML = locked ? "" : costChips(d.cost);
+          var tbtn = $("atrain-" + k);
+          tbtn.disabled = locked || S.buildings.barracks < 1 || S.queue.length >= queueSlots() ||
+            S.units.length + S.queue.length >= cap || !canPay(d.cost);
+          var abtn = $("aauto-" + k);
+          abtn.classList.toggle("on", !!S.auto[k]);
+          abtn.disabled = locked;
+          // queue pips
+          var qbox = $("aq-" + k);
+          var mine = S.queue.filter(function (q) { return q.type === k; });
+          if (qbox.children.length !== mine.length + (mine.length ? 1 : 0)) {
+            qbox.innerHTML = "";
+            mine.forEach(function () {
+              var qp = el("div", "qp"); qp.appendChild(el("i"));
+              qbox.appendChild(qp);
+            });
+            if (mine.length) {
+              var cx = el("button", "qcancel", "✕ refund");
+              cx.type = "button";
+              cx.addEventListener("click", function () { cancelQueue(k); });
+              qbox.appendChild(cx);
+            }
+          }
+          mine.forEach(function (q, qi) {
+            var fill = qbox.children[qi] && qbox.children[qi].firstChild;
+            if (fill) fill.style.width = clamp((1 - q.t / q.total) * 100, 0, 100) + "%";
+          });
+        });
+      }
+      function techName(id) {
+        for (var i = 0; i < TECH.length; i++) if (TECH[i].id === id) return TECH[i].name;
+        return id;
+      }
+
+      function refreshRealm(quick) {
+        $("quest-count").textContent = S.questsDone.length + " / " + QUESTS.length;
+        QUESTS.forEach(function (q) {
+          var done = S.questsDone.indexOf(q.id) >= 0;
+          var row = $("qrow-" + q.id);
+          row.classList.toggle("done", done);
+          $("qcheck-" + q.id).textContent = done ? "✓" : "○";
+          var p = clamp(q.prog(S), 0, q.target);
+          $("qbar-" + q.id).style.width = (p / q.target) * 100 + "%";
+          $("qnum-" + q.id).textContent = done ? "done" : fmt(p) + "/" + fmt(q.target);
+        });
+        $("st-wood").textContent = fmt(S.stats.gatheredWood);
+        $("st-kills").textContent = fmt(S.stats.kills);
+        $("st-waves").textContent = fmt(S.stats.wavesWon);
+        $("st-combo").textContent = "×" + S.maxCombo;
+        $("st-earned").textContent = fmt(S.stats.totalEarned);
+        $("st-time").textContent = fmtDur(S.time);
+      }
+
+      function refreshAll(quick) { refreshHUD(); refreshDomain(quick); refreshFront(quick); refreshRealm(quick); }
+
+      function rebuildUnlocks() {
+        $("panel-workshop").classList.toggle("hidden", S.buildings.workshop < 1);
+        $("panel-forge").classList.toggle("hidden", S.buildings.forge < 1);
+      }
+
+      /* ---------------- tabs / overlays ---------------- */
+      var currentTab = "domain";
+      function switchTab(name) {
+        currentTab = name;
+        ["domain", "front", "realm"].forEach(function (v) {
+          $("view-" + v).classList.toggle("active", v === name);
+        });
+        Array.prototype.forEach.call(document.querySelectorAll(".tab"), function (b) {
+          b.classList.toggle("active", b.getAttribute("data-view") === name);
+        });
+        var view = $("view-" + name);
+        if (view) view.scrollTop = 0;
+        if (name === "front") sizeCanvas();
+        SFX.tapui();
+      }
+      function setWarBadge(on) {
+        var b = $("war-badge");
+        if (b) b.classList.toggle("hidden", !on);
+      }
+
+      function setPaused(p) {
+        S.paused = p;
+        var ov = $("pause-overlay");
+        if (p && !ov) {
+          ov = el("div", "", '<b>PAUSED</b><span>Tap anywhere to resume</span>');
+          ov.id = "pause-overlay";
+          ov.addEventListener("click", function () { setPaused(false); });
+          document.body.appendChild(ov);
+        } else if (!p && ov && ov.parentNode) {
+          ov.parentNode.removeChild(ov);
+        }
+        $("btn-pause").textContent = p ? "▶" : "❚❚";
+      }
+
+      function setMuted(m) {
+        S.muted = m;
+        SFX.setMuted(m);
+        $("btn-mute").textContent = m ? "🔇" : "♪";
+        $("btn-mute").classList.toggle("on", !m);
+        var sm = $("set-mute");
+        if (sm) { sm.textContent = m ? "MUTED" : "ON"; sm.classList.toggle("on", !m); }
+      }
+
+      /* ---------------- modals ---------------- */
+      var modalRoot = $("modal-root");
+      function awayModal(info, onDone) {
+        var rows = Object.keys(info.gains).map(function (k) {
+          return '<div class="grow"><span style="color:' + RES[k].color + '">● ' + RES[k].label + "</span><span>+" + fmt(info.gains[k]) + "</span></div>";
+        }).join("");
+        var veil = el("div", "modal-veil");
+        veil.innerHTML =
+          '<div class="modal"><div class="mico">🌙</div>' +
+          "<h3>WHILE YOU WERE AWAY</h3>" +
+          "<p>Emberhold's crew kept working for <b style=\"color:var(--gold)\">" + fmtDur(info.dur) + "</b> — at a skeleton pace.</p>" +
+          '<div class="gains">' + rows + "</div>" +
+          '<div class="mbtns"><button class="btn btn-ember btn-wide" id="away-collect">COLLECT</button></div></div>';
+        modalRoot.appendChild(veil);
+        $("away-collect").addEventListener("click", function () {
+          if (veil.parentNode) veil.parentNode.removeChild(veil);
+          SFX.coin();
+          onDone && onDone();
+        });
+      }
+      function confirmModal(title, msg, okLabel, onOk) {
+        var veil = el("div", "modal-veil");
+        veil.innerHTML =
+          '<div class="modal"><div class="mico">🔥</div><h3>' + esc(title) + "</h3><p>" + esc(msg) + "</p>" +
+          '<div class="mbtns"><button class="btn btn-danger btn-wide" id="cf-ok">' + esc(okLabel) + "</button>" +
+          '<button class="btn btn-ghost btn-wide" id="cf-no">CANCEL</button></div></div>';
+        modalRoot.appendChild(veil);
+        $("cf-ok").addEventListener("click", function () {
+          if (veil.parentNode) veil.parentNode.removeChild(veil);
+          onOk();
+        });
+        $("cf-no").addEventListener("click", function () {
+          if (veil.parentNode) veil.parentNode.removeChild(veil);
+        });
+      }
+
+      /* ---------------- title screen & boot ---------------- */
+      function startGame(state, away) {
+        S = state;
+        started = true;
+        SFX.setMuted(S.muted);
+        setMuted(S.muted);
+        $("title-screen").classList.add("out");
+        setTimeout(function () { $("title-screen").classList.add("hidden"); }, 460);
+        $("app").classList.remove("hidden");
+        rebuildUnlocks();
+        refreshAll(true);
+        sizeCanvas();
+        setWarBadge(S.waveActive);
+        if (away) {
+          // gains were applied pre-boot; show the receipt
+          RES_KEYS.forEach(function (k) { if (away.gains[k]) { /* already gained */ } });
+          awayModal(away, null);
+        }
+      }
+
+      function bootContinue() {
+        var raw = readSave();
+        var state, away = null;
+        if (raw) {
+          away = offlineGains(raw);
+          state = stateFromSave(raw);
+          if (away) {
+            Object.keys(away.gains).forEach(function (k) {
+              state.res[k] = Math.min(k === "valor" ? Infinity : STOCK.cap(state.stockLvl), state.res[k] + away.gains[k]);
+              state.stats.totalEarned += away.gains[k];
+            });
+          }
+        } else {
+          state = newGame(Math.floor(Math.random() * 4294967295));
+          initPlots(state);
+        }
+        startGame(state, away);
+        toast("good", raw ? "Welcome back, liege" : "Emberhold is founded", raw ? "The reign continues." : "Tap the trees — gather 30 wood to light the way.");
+      }
+
+      function bootFresh() {
+        confirmModal("FORGE ANEW", "Burn the current reign and found a new Emberhold? This cannot be undone.", "BURN AND REBUILD", function () {
+          burnSave();
+          var state = newGame(Math.floor(Math.random() * 4294967295));
+          initPlots(state);
+          startGame(state, null);
+          toast("good", "A new spark", "Tap the trees — gather 30 wood to light the way.");
+        });
+      }
+
+      function buildTitleButtons() {
+        var box = $("title-btns");
+        box.innerHTML = "";
+        var raw = readSave();
+        if (raw) {
+          var b1 = el("button", "btn btn-ember btn-wide", "CONTINUE THE REIGN");
+          b1.addEventListener("click", function () { SFX.unlock(); bootContinue(); });
+          var b2 = el("button", "btn btn-ghost btn-wide", "FORGE ANEW");
+          b2.addEventListener("click", function () { SFX.unlock(); bootFresh(); });
+          box.appendChild(b1); box.appendChild(b2);
+        } else {
+          var b3 = el("button", "btn btn-ember btn-wide", "FOUND THE EMBERHOLD");
+          b3.addEventListener("click", function () { SFX.unlock(); bootContinue(); });
+          box.appendChild(b3);
+        }
+      }
+
+      /* ---------------- wiring ---------------- */
+      function wire() {
+        Array.prototype.forEach.call(document.querySelectorAll(".tab"), function (b) {
+          b.addEventListener("click", function () { switchTab(b.getAttribute("data-view")); });
+        });
+        $("btn-pause").addEventListener("click", function () { if (S) setPaused(!S.paused); });
+        $("btn-mute").addEventListener("click", function () { if (!S) return; setMuted(!S.muted); save(); });
+        $("btn-hire").addEventListener("click", hireWorker);
+        $("btn-stock").addEventListener("click", expandStock);
+        $("btn-smite").addEventListener("click", function () { if (S && !S.paused) battleCall(); });
+        $("btn-burn").addEventListener("click", function () {
+          confirmModal("Burn it all — are you sure?", "The realm, the crew, the line — all of it returns to ash.", "BURN IT ALL", function () {
+            burnSave();
+            location.reload();
+          });
+        });
+        var sm = $("set-mute");
+        if (sm) sm.addEventListener("click", function () { setMuted(!S.muted); save(); });
+
+        // canvas taps → smite (tap = quick press without drag, so page
+        // scrolling can still start on the canvas via touch-action: pan-y)
+        var cv = $("battle");
+        if (cv) {
+          var tapX = 0, tapY = 0, tapT = 0, tapping = false;
+          cv.addEventListener("pointerdown", function (ev) {
+            if (!S || S.paused) return;
+            tapping = true; tapX = ev.clientX; tapY = ev.clientY; tapT = Date.now();
+          });
+          cv.addEventListener("pointerup", function (ev) {
+            if (!tapping) return;
+            tapping = false;
+            if (!S || S.paused) return;
+            if (Math.hypot(ev.clientX - tapX, ev.clientY - tapY) > 14 || Date.now() - tapT > 600) return; // a scroll, not a tap
+            var rect = cv.getBoundingClientRect();
+            if (!rect.width) return;
+            var vx = ((ev.clientX - rect.left) / rect.width) * FIELD_W;
+            var vy = ((ev.clientY - rect.top) / rect.height) * vh;
+            smiteAt(vx, vy);
+          });
+          cv.addEventListener("pointercancel", function () { tapping = false; });
+        }
+        // first gesture unlocks audio (iOS)
+        document.addEventListener("pointerdown", function once() {
+          SFX.unlock();
+          document.removeEventListener("pointerdown", once);
+        });
+        // keyboard conveniences (handy on desktop browsers too)
+        document.addEventListener("keydown", function (ev) {
+          if (!S || !started || !ev.key) return;
+          var k = ev.key.toLowerCase();
+          if (k === "p") { setPaused(!S.paused); }
+          else if (k === "m") { setMuted(!S.muted); save(); }
+          else if (k === "1") switchTab("domain");
+          else if (k === "2") switchTab("front");
+          else if (k === "3") switchTab("realm");
+          else if (k === " ") { ev.preventDefault(); battleCall(); }
+        });
+        // save when the app is hidden / reloaded
+        document.addEventListener("visibilitychange", function () {
+          if (document.visibilityState === "hidden" && S && started) save();
+        });
+        window.addEventListener("pagehide", function () { if (S && started) save(); });
+        window.addEventListener("resize", sizeCanvas);
+        window.addEventListener("contextmenu", function (ev) {
+          if (ev.target && ev.target.closest && (ev.target.closest("#battle") || ev.target.closest(".node-tile"))) ev.preventDefault();
+        });
+      }
+
+      /* ---------------- main loop ---------------- */
+      var last = 0, uiAcc = 0, realmAcc = 0, saveAcc = 0;
+      function frame(now) {
+        var dt = last ? Math.min(0.1, (now - last) / 1000) : 0;
+        last = now;
+        if (S && started && !S.paused) {
+          sim(dt);
+          saveAcc += dt;
+          if (saveAcc > 5) { saveAcc = 0; save(); }
+        }
+        if (S && started) {
+          draw(now / 1000);
+          uiAcc += dt;
+          if (uiAcc > 0.1) {
+            uiAcc = 0;
+            refreshHUD();
+            if (currentTab === "domain") refreshDomain();
+            if (currentTab === "front") refreshFront();
+            realmAcc += 0.1;
+            if (realmAcc > 0.5 || currentTab === "realm") { realmAcc = 0; refreshRealm(); }
+          }
+          // keep the war badge honest
+          if (S.waveActive) setWarBadge(true);
+        }
+        requestAnimationFrame(frame);
+      }
+
+      /* ---------------- init ---------------- */
+      function init() {
+        buildResStrip();
+        buildPlots();
+        buildFocusSeg();
+        buildStructRows();
+        buildUpgRows();
+        buildTechRows();
+        buildArmyRows();
+        buildQuestRows();
+        buildTitleButtons();
+        wire();
+        sizeCanvas();
+        requestAnimationFrame(frame);
+      }
+      init();
+    })();
+    </script>
+  </body>
+</html>
