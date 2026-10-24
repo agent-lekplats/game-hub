@@ -2,28 +2,54 @@
   {
     "slug": "logistik",
     "title": "Emberhold — A Living Frontier",
+    "short": "Emberhold",
     "description": "Inkrementellt logistikspel. Bygg upp flöden och se gränslandet växa.",
+    "genre": "Bygg & logistik",
+    "cover": "games/logistik/images/cover.webp",
+    "accent": "#e08a34",
+    "tags": ["Inkrementellt"],
     "versions": [
-      { "id": "latest", "label": "Mer juicy", "path": "games/logistik/latest" },
-      { "id": "v1", "label": "v1", "path": "games/logistik/v1" }
+      { "id": "latest", "label": "Mer juicy", "path": "games/logistik/latest", "note": "Senaste versionen" },
+      { "id": "v1", "label": "v1", "path": "games/logistik/v1", "note": "Första versionen" }
     ]
   },
   {
     "slug": "hybrid-logistik",
     "title": "Emberhold — A Living Miniature World",
+    "short": "Miniature World",
     "description": "Hybrid logistik- och simulationsprototyp i miniatyrvärld.",
-    "versions": [{ "id": "v1", "label": "v1", "path": "games/hybrid-logistik" }]
+    "genre": "Bygg & logistik",
+    "cover": "games/hybrid-logistik/images/cover.webp",
+    "accent": "#7fb069",
+    "tags": ["Simulation", "Miniatyr"],
+    "versions": [
+      { "id": "v1", "label": "v1", "path": "games/hybrid-logistik", "note": "Prototyp" }
+    ]
   },
   {
     "slug": "mysig-by",
     "title": "Tiny Logistics — a living settlement",
+    "short": "Tiny Logistics",
     "description": "Mysig byggare med en levande liten bosättning.",
-    "versions": [{ "id": "v1", "label": "v1", "path": "games/mysig-by" }]
+    "genre": "Bygg & logistik",
+    "cover": "games/mysig-by/images/cover.webp",
+    "accent": "#d98c4a",
+    "tags": ["Byggare", "Mysigt"],
+    "versions": [
+      { "id": "v1", "label": "v1", "path": "games/mysig-by", "note": "Prototyp" }
+    ]
   },
   {
     "slug": "duell",
     "title": "SWAY — Duel of Intention",
+    "short": "SWAY",
     "description": "Dynamisk 2D-duell där avsikt och timing avgör.",
-    "versions": [{ "id": "v1", "label": "v1", "path": "games/duell" }]
+    "genre": "Duell",
+    "cover": "games/duell/images/cover.webp",
+    "accent": "#d0523f",
+    "tags": ["Action", "Realtid"],
+    "versions": [
+      { "id": "v1", "label": "v1", "path": "games/duell", "note": "Prototyp" }
+    ]
   }
 ]
