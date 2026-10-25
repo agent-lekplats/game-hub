@@ -1,0 +1,158 @@
+@import "tailwindcss";
+
+@theme {
+  --font-display: "Cinzel", serif;
+  --font-body: "Sora", system-ui, sans-serif;
+  --color-ember: #ff7a29;
+  --color-ember-soft: #ffb066;
+  --color-parch: #ece1c8;
+  --color-gold: #f2b33d;
+}
+
+html, body, #root {
+  height: 100%;
+  overflow: hidden;
+}
+
+body {
+  font-family: var(--font-body);
+  color: var(--color-parch);
+  -webkit-font-smoothing: antialiased;
+  user-select: none;
+}
+
+.font-display { font-family: var(--font-display); }
+
+/* ---------- panels ---------- */
+.glass {
+  background: linear-gradient(165deg, rgba(24, 19, 12, 0.88), rgba(13, 10, 7, 0.92));
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 200, 130, 0.14);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 220, 170, 0.06);
+}
+
+.glass-soft {
+  background: rgba(20, 15, 9, 0.72);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 200, 130, 0.1);
+}
+
+.hairline { border-color: rgba(255, 200, 130, 0.14); }
+
+.title-caps {
+  font-family: var(--font-display);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+/* ---------- buttons (hyper-tactile spring physics) ---------- */
+.btn-ember {
+  background: linear-gradient(180deg, #ffbe70, #e0641a);
+  color: #221204;
+  box-shadow: 0 3px 0 #7c3a10, 0 8px 22px rgba(224, 100, 26, 0.38), inset 0 1px 0 rgba(255,255,255,0.48);
+  transition: transform 0.16s cubic-bezier(0.34, 1.56, 0.64, 1), filter 0.12s ease, box-shadow 0.12s ease;
+  will-change: transform;
+}
+.btn-ember:hover:not(:disabled) {
+  filter: brightness(1.12) saturate(1.08);
+  transform: translateY(-1.5px) scale(1.045);
+  box-shadow: 0 4px 0 #7c3a10, 0 12px 28px rgba(255, 130, 40, 0.52), inset 0 1px 0 rgba(255,255,255,0.6);
+}
+.btn-ember:active:not(:disabled) {
+  transform: translateY(2px) scale(0.92, 0.96);
+  box-shadow: 0 0px 0 #7c3a10, 0 3px 10px rgba(224, 100, 26, 0.3);
+  transition-duration: 0.04s;
+}
+.btn-ember:disabled { filter: grayscale(0.7) brightness(0.55); cursor: not-allowed; }
+
+.btn-ghost {
+  background: rgba(255, 190, 120, 0.07);
+  border: 1px solid rgba(255, 200, 130, 0.18);
+  transition: background 0.14s ease, border-color 0.14s ease, transform 0.16s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.14s ease;
+  will-change: transform;
+}
+.btn-ghost:hover:not(:disabled) {
+  background: rgba(255, 190, 120, 0.16);
+  border-color: rgba(255, 205, 140, 0.45);
+  transform: translateY(-1px) scale(1.05);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35), 0 0 12px rgba(255, 170, 80, 0.16);
+}
+.btn-ghost:active:not(:disabled) {
+  transform: translateY(1.5px) scale(0.92);
+  transition-duration: 0.04s;
+}
+.btn-ghost:disabled { opacity: 0.45; cursor: not-allowed; }
+
+.juicy-card {
+  transition: transform 0.16s cubic-bezier(0.34, 1.56, 0.64, 1), border-color 0.15s ease, background-color 0.15s ease;
+}
+.juicy-card:hover {
+  border-color: rgba(255, 205, 135, 0.24);
+  background-color: rgba(0, 0, 0, 0.34);
+}
+
+.chip {
+  background: rgba(255, 190, 120, 0.08);
+  border: 1px solid rgba(255, 200, 130, 0.14);
+}
+
+/* ---------- scrollbars ---------- */
+.scroll-slim::-webkit-scrollbar { width: 6px; }
+.scroll-slim::-webkit-scrollbar-thumb { background: rgba(255, 180, 100, 0.22); border-radius: 999px; }
+.scroll-slim::-webkit-scrollbar-track { background: transparent; }
+.scroll-slim { scrollbar-width: thin; scrollbar-color: rgba(255, 180, 100, 0.22) transparent; }
+
+/* ---------- animations ---------- */
+@keyframes toast-in {
+  0% { opacity: 0; transform: translateY(-14px) scale(0.94); }
+  100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+.toast-in { animation: toast-in 0.35s cubic-bezier(0.2, 1.4, 0.4, 1) both; }
+
+@keyframes toast-out {
+  to { opacity: 0; transform: translateY(-8px) scale(0.96); }
+}
+.toast-out { animation: toast-out 0.3s ease both; }
+
+@keyframes quest-done {
+  0% { box-shadow: 0 0 0 0 rgba(255, 180, 70, 0.8); }
+  100% { box-shadow: 0 0 0 18px rgba(255, 180, 70, 0); }
+}
+.quest-done { animation: quest-done 0.8s ease-out; }
+
+@keyframes appear {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.appear { animation: appear 0.4s ease both; }
+
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(255, 122, 41, 0.45); }
+  50% { box-shadow: 0 0 22px 3px rgba(255, 122, 41, 0.45); }
+}
+.pulse-glow { animation: pulse-glow 2.2s ease-in-out infinite; }
+
+@keyframes flicker {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.82; }
+}
+.flicker { animation: flicker 3s ease-in-out infinite; }
+
+@keyframes rise-in {
+  0% { opacity: 0; transform: scale(1.04); }
+  100% { opacity: 1; transform: scale(1); }
+}
+.rise-in { animation: rise-in 0.8s cubic-bezier(0.16, 1, 0.3, 1) both; }
+
+/* vignette on the whole app */
+.vignette::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(ellipse at center, transparent 58%, rgba(6, 4, 2, 0.55) 100%);
+  z-index: 5;
+}
+
+canvas.game-canvas { cursor: crosshair; display: block; }
+canvas.game-canvas.dragging { cursor: grabbing; }

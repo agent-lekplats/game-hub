@@ -1,0 +1,29 @@
+[
+  {
+    "slug": "logistik",
+    "title": "Emberhold — A Living Frontier",
+    "description": "Inkrementellt logistikspel. Bygg upp flöden och se gränslandet växa.",
+    "versions": [
+      { "id": "latest", "label": "Mer juicy", "path": "games/logistik/latest" },
+      { "id": "v1", "label": "v1", "path": "games/logistik/v1" }
+    ]
+  },
+  {
+    "slug": "hybrid-logistik",
+    "title": "Emberhold — A Living Miniature World",
+    "description": "Hybrid logistik- och simulationsprototyp i miniatyrvärld.",
+    "versions": [{ "id": "v1", "label": "v1", "path": "games/hybrid-logistik" }]
+  },
+  {
+    "slug": "mysig-by",
+    "title": "Tiny Logistics — a living settlement",
+    "description": "Mysig byggare med en levande liten bosättning.",
+    "versions": [{ "id": "v1", "label": "v1", "path": "games/mysig-by" }]
+  },
+  {
+    "slug": "duell",
+    "title": "SWAY — Duel of Intention",
+    "description": "Dynamisk 2D-duell där avsikt och timing avgör.",
+    "versions": [{ "id": "v1", "label": "v1", "path": "games/duell" }]
+  }
+]
